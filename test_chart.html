@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        #chartContainer {
+            width: 800px;
+            height: 400px;
+            border: 1px solid #ccc;
+        }
+        #status {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chart.js v4 Test</h1>
+    <div id="status">Loading...</div>
+    <div id="chartContainer">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusDiv = document.getElementById('status');
+
+            // Check if Chart.js loaded
+            if (typeof Chart === 'undefined') {
+                statusDiv.innerHTML = '<strong style="color: red;">ERROR: Chart.js failed to load</strong>';
+                return;
+            }
+            statusDiv.innerHTML += '<br>✓ Chart.js loaded (version: ' + Chart.version + ')';
+
+            // Check if annotation plugin loaded
+            if (typeof window.ChartAnnotation !== 'undefined') {
+                Chart.register(window.ChartAnnotation);
+                statusDiv.innerHTML += '<br>✓ Annotation plugin loaded and registered';
+            } else {
+                statusDiv.innerHTML += '<br>⚠ Annotation plugin NOT found';
+            }
+
+            // Generate test data
+            const data = [];
+            for (let x = -15; x <= -5; x += 0.1) {
+                const y = 0.85 / (1 + Math.exp(-47 * (x + 8.3)));
+                data.push({ x, y });
+            }
+
+            // Create chart
+            try {
+                const ctx = document.getElementById('myChart');
+                const chart = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Sigmoid Curve',
+                                data: data,
+                                borderColor: '#667eea',
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                showLine: true,
+                                pointRadius: 0,
+                                borderWidth: 3
+                            },
+                            {
+                                label: 'Test Point',
+                                data: [{ x: -8.3, y: 0.425 }],
+                                backgroundColor: '#e53e3e',
+                                pointRadius: 10
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                title: {
+                                    display: true,
+                                    text: 'log₁₀(CPR)'
+                                }
+                            },
+                            y: {
+                                type: 'linear',
+                                title: {
+                                    display: true,
+                                    text: 'Exploration'
+                                },
+                                min: 0,
+                                max: 1
+                            }
+                        },
+                        plugins: {
+                            annotation: {
+                                annotations: {
+                                    line1: {
+                                        type: 'line',
+                                        scaleID: 'x',
+                                        value: -7.8,
+                                        borderColor: 'rgba(197, 48, 48, 0.6)',
+                                        borderWidth: 2,
+                                        borderDash: [5, 5],
+                                        label: {
+                                            content: 'Boundary 1',
+                                            display: true,
+                                            position: 'start'
+                                        }
+                                    },
+                                    line2: {
+                                        type: 'line',
+                                        scaleID: 'x',
+                                        value: -8.8,
+                                        borderColor: 'rgba(56, 161, 105, 0.6)',
+                                        borderWidth: 2,
+                                        borderDash: [5, 5],
+                                        label: {
+                                            content: 'Boundary 2',
+                                            display: true,
+                                            position: 'start'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                statusDiv.innerHTML += '<br>✓ Chart created successfully!';
+            } catch (e) {
+                statusDiv.innerHTML += '<br><strong style="color: red;">ERROR creating chart: ' + e.message + '</strong>';
+                console.error('Chart error:', e);
+            }
+        });
+    </script>
+</body>
+</html>

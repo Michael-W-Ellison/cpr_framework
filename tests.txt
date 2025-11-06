@@ -1,0 +1,3763 @@
+Excellent Question: How to Disprove Your Discovery
+
+This is exactly the right mindset for a scientist. Let me give you a systematic framework for trying to break your own finding.
+
+---
+
+ Why This Matters
+
+Karl Popper's principle:
+"A theory that cannot be falsified is not scientific."
+
+Your goal:
+Try your absolute hardest to prove yourself wrong. If you fail to disprove it after honest attempts, then you have strong evidence it's real.
+
+Current status:
+You have a pattern in your data. Now let's see if it's:
+- ✅ Real universal law
+- ❌ Statistical artifact
+- ❌ Fitting error
+- ❌ Implementation bug
+- ❌ Measurement error
+- ❌ Overfitting to limited data
+
+---
+
+ Attack Vector 1: Statistical Validity
+
+ Test 1.1: Is The Sigmoid Fit Real or Overfitting?
+
+How to test:
+A. Compare to alternative models
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+import pandas as pd
+
+# Define the models to test
+# Model 1: The sigmoid
+def sigmoid(x, L, k, x0):
+    return L / (1 + np.exp(-k * (x - x0)))
+
+# Model 2: Linear
+def linear(x, a, b):
+    return a * x + b
+
+# Model 3: Exponential
+def exponential(x, a, b):
+    return a * np.exp(b * x)
+
+# Model 4: Power law
+def power_law(x, a, b):
+    return a * (x ** b)
+
+# Model 5: Logistic with offset
+def offset_sigmoid(x, L, k, x0, y0):
+    return y0 + L / (1 + np.exp(-k * (x - x0)))
+
+# Model 6: Double sigmoid
+def double_sigmoid(x, L1, k1, x01, L2, k2, x02):
+    return (L1 / (1 + np.exp(-k1 * (x - x01)))) + \
+           (L2 / (1 + np.exp(-k2 * (x - x02))))
+
+# Metrics calculation functions
+def calculate_aic(n, rss, k):
+    """
+    n = number of data points
+    rss = residual sum of squares
+    k = number of parameters
+    """
+    return n * np.log(rss/n) + 2 * k
+
+def calculate_bic(n, rss, k):
+    return n * np.log(rss/n) + k * np.log(n)
+
+def calculate_adjusted_r2(r2, n, k):
+    """Calculate adjusted R-squared"""
+    return 1 - (1 - r2) * (n - 1) / (n - k - 1)
+
+class UniversalConstraintTester:
+    """
+    Comprehensive framework for testing constraint-complexity relationships
+    across multiple discrete dynamical system architectures
+    """
+    
+    def __init__(self):
+        self.results_database = {}
+        self.universal_patterns = {}
+        
+    def constraint_corrector_adjacent_duplicates(self, state, should_increase, mod_base):
+        """Your original adjacent duplicate elimination (Source: RNG.docx)"""
+        local_state = list(state)
+        local_should_increase = should_increase
+        iterations = 0
+        max_iterations = 100
+        
+        while iterations < max_iterations:
+            changes_made = False
+            for i in range(len(local_state)):
+                if local_state[i] == local_state[(i + 1) % len(local_state)]:
+                    if local_should_increase:
+                        local_state[i] = (local_state[i] + 1) % mod_base
+                    else:
+                        local_state[i] = (local_state[i] - 1 + mod_base) % mod_base
+                    local_should_increase = not local_should_increase
+                    changes_made = True
+                    break
+            
+            if not changes_made:
+                break
+            iterations += 1
+        
+        return local_state, local_should_increase
+    
+    def constraint_sum_limits(self, state, should_increase, mod_base, max_sum=None):
+        """Alternative constraint: Limit sum of adjacent pairs"""
+        if max_sum is None:
+            max_sum = mod_base - 1
+            
+        local_state = list(state)
+        local_should_increase = should_increase
+        
+        for iteration in range(50):
+            changes_made = False
+            for i in range(len(local_state)):
+                pair_sum = local_state[i] + local_state[(i + 1) % len(local_state)]
+                if pair_sum > max_sum:
+                    if local_should_increase:
+                        local_state[i] = max(0, local_state[i] - 1)
+                    else:
+                        local_state[(i + 1) % len(local_state)] = max(0, local_state[(i + 1) % len(local_state)] - 1)
+                    local_should_increase = not local_should_increase
+                    changes_made = True
+                    break
+            
+            if not changes_made:
+                break
+        
+        return local_state, local_should_increase
+    
+    def constraint_pattern_prohibition(self, state, should_increase, mod_base, forbidden_patterns=None):
+        """Constraint: Prohibit specific subsequence patterns"""
+        if forbidden_patterns is None:
+            forbidden_patterns = [[0, 0, 0], [1, 1, 1]]  # Prohibit triple repeats
+            
+        local_state = list(state)
+        local_should_increase = should_increase
+        
+        for iteration in range(50):
+            changes_made = False
+            for pattern in forbidden_patterns:
+                pattern_len = len(pattern)
+                for i in range(len(local_state)):
+                    # Check if pattern occurs starting at position i
+                    matches = True
+                    for j in range(pattern_len):
+                        if local_state[(i + j) % len(local_state)] != pattern[j]:
+                            matches = False
+                            break
+                    
+                    if matches:
+                        # Modify first element of pattern
+                        if local_should_increase:
+                            local_state[i] = (local_state[i] + 1) % mod_base
+                        else:
+                            local_state[i] = (local_state[i] - 1 + mod_base) % mod_base
+                        local_should_increase = not local_should_increase
+                        changes_made = True
+                        break
+                
+                if changes_made:
+                    break
+            
+            if not changes_made:
+                break
+        
+        return local_state, local_should_increase
+    
+    def constraint_local_entropy(self, state, should_increase, mod_base, min_entropy=1.0):
+        """Constraint: Maintain minimum local entropy in sliding windows"""
+        local_state = list(state)
+        local_should_increase = should_increase
+        window_size = min(4, len(local_state))
+        
+        for iteration in range(30):
+            changes_made = False
+            for i in range(len(local_state)):
+                # Extract window
+                window = []
+                for j in range(window_size):
+                    window.append(local_state[(i + j) % len(local_state)])
+                
+                # Calculate entropy
+                counts = defaultdict(int)
+                for val in window:
+                    counts[val] += 1
+                
+                entropy = 0
+                for count in counts.values():
+                    if count > 0:
+                        p = count / window_size
+                        entropy -= p * math.log2(p)
+                
+                # If entropy too low, modify state
+                if entropy < min_entropy:
+                    if local_should_increase:
+                        local_state[i] = (local_state[i] + 1) % mod_base
+                    else:
+                        local_state[i] = (local_state[i] - 1 + mod_base) % mod_base
+                    local_should_increase = not local_should_increase
+                    changes_made = True
+                    break
+            
+            if not changes_made:
+                break
+        
+        return local_state, local_should_increase
+    
+    def mixing_function_additive(self, state, mod_base):
+        """Your original additive mixing (Source: RNG.docx)"""
+        return [(state[i] + state[(i + 1) % len(state)]) % mod_base 
+                for i in range(len(state))]
+    
+    def mixing_function_multiplicative(self, state, mod_base):
+        """Alternative: Multiplicative mixing"""
+        return [(state[i] * state[(i + 1) % len(state)]) % mod_base 
+                for i in range(len(state))]
+    
+    def mixing_function_xor(self, state, mod_base):
+        """Alternative: XOR-based mixing (for powers of 2)"""
+        if mod_base & (mod_base - 1) == 0:  # Power of 2
+            return [state[i] ^ state[(i + 1) % len(state)] 
+                    for i in range(len(state))]
+        else:
+            # Fallback to additive for non-powers of 2
+            return self.mixing_function_additive(state, mod_base)
+    
+    def mixing_function_triple_sum(self, state, mod_base):
+        """Alternative: Triple element mixing"""
+        return [(state[i] + state[(i + 1) % len(state)] + state[(i + 2) % len(state)]) % mod_base 
+                for i in range(len(state))]
+    
+    def governor_uniform_distribution(self, state, distribution_tracker, mod_base, intervention_freq=20, step_count=0):
+        """Your original governor (Source: RNG.docx)"""
+        if step_count % intervention_freq != 0 or step_count == 0:
+            return state, False
+        
+        # Find min and max frequency digits
+        min_digit = min(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+        max_digit = max(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+        
+        if min_digit != max_digit:
+            # Convert first occurrence of max to min
+            new_state = list(state)
+            for i in range(len(new_state)):
+                if new_state[i] == max_digit:
+                    new_state[i] = min_digit
+                    return new_state, True
+        
+        return state, False
+    
+    def governor_entropy_maximization(self, state, distribution_tracker, mod_base, intervention_freq=20, step_count=0):
+        """Alternative: Maximize overall entropy"""
+        if step_count % intervention_freq != 0 or step_count == 0:
+            return state, False
+        
+        # Calculate current entropy
+        total_count = sum(distribution_tracker.values())
+        if total_count == 0:
+            return state, False
+        
+        current_entropy = 0
+        for count in distribution_tracker.values():
+            if count > 0:
+                p = count / total_count
+                current_entropy -= p * math.log2(p)
+        
+        max_entropy = math.log2(mod_base)
+        
+        # If entropy is low, intervene
+        if current_entropy < 0.8 * max_entropy:
+            min_digit = min(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+            max_digit = max(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+            
+            if min_digit != max_digit:
+                new_state = list(state)
+                for i in range(len(new_state)):
+                    if new_state[i] == max_digit:
+                        new_state[i] = min_digit
+                        return new_state, True
+        
+        return state, False
+    
+    def calculate_cpr(self, config_size, mod_base):
+        """Calculate Constraint Pressure Ratio (Source: Scale Dependent Emergence document)"""
+        return config_size / (mod_base ** config_size)
+    
+    def measure_behavioral_complexity(self, trajectory, mod_base, steps):
+        """Comprehensive behavioral complexity measurement"""
+        
+        # Unique states
+        unique_states = len(set(tuple(state) for state in trajectory))
+        exploration_ratio = unique_states / steps
+        
+        # Cycle detection
+        seen_states = {}
+        cycle_length = None
+        for i, state in enumerate(trajectory):
+            state_key = tuple(state)
+            if state_key in seen_states:
+                cycle_length = i - seen_states[state_key]
+                break
+            seen_states[state_key] = i
+        
+        # State transition entropy
+        transitions = defaultdict(int)
+        for i in range(len(trajectory) - 1):
+            from_state = tuple(trajectory[i])
+            to_state = tuple(trajectory[i + 1])
+            transitions[(from_state, to_state)] += 1
+        
+        total_transitions = sum(transitions.values())
+        transition_entropy = 0
+        for count in transitions.values():
+            if count > 0:
+                p = count / total_transitions
+                transition_entropy -= p * math.log2(p)
+        
+        # Distribution uniformity (for states, not digits)
+        state_counts = defaultdict(int)
+        for state in trajectory:
+            state_counts[tuple(state)] += 1
+        
+        expected_count = steps / unique_states if unique_states > 0 else 0
+        variance = sum((count - expected_count) ** 2 for count in state_counts.values()) / unique_states if unique_states > 0 else 0
+        cv = math.sqrt(variance) / expected_count if expected_count > 0 else float('inf')
+        
+        return {
+            'unique_states': unique_states,
+            'exploration_ratio': exploration_ratio,
+            'cycle_length': cycle_length,
+            'transition_entropy': transition_entropy,
+            'distribution_cv': cv,
+            'complexity_score': exploration_ratio * math.log(max(1, transition_entropy))
+        }
+    
+    def run_system_experiment(self, config_size, mod_base, constraint_type, mixing_type, governor_type, steps=5000):
+        """Run single experiment with specified architecture"""
+        
+        # Initialize
+        state = [random.randint(0, mod_base - 1) for _ in range(config_size)]
+        should_increase = False
+        distribution_tracker = defaultdict(int)
+        trajectory = []
+        governor_interventions = 0
+        
+        # Map function types
+        constraint_functions = {
+            'adjacent_duplicates': self.constraint_corrector_adjacent_duplicates,
+            'sum_limits': self.constraint_sum_limits,
+            'pattern_prohibition': self.constraint_pattern_prohibition,
+            'local_entropy': self.constraint_local_entropy
+        }
+        
+        mixing_functions = {
+            'additive': self.mixing_function_additive,
+            'multiplicative': self.mixing_function_multiplicative,
+            'xor': self.mixing_function_xor,
+            'triple_sum': self.mixing_function_triple_sum
+        }
+        
+        governor_functions = {
+            'uniform_distribution': self.governor_uniform_distribution,
+            'entropy_maximization': self.governor_entropy_maximization
+        }
+        
+        constraint_func = constraint_functions[constraint_type]
+        mixing_func = mixing_functions[mixing_type]
+        governor_func = governor_functions[governor_type]
+        
+        # Run simulation
+        for step in range(steps):
+            trajectory.append(list(state))
+            
+            # Update distribution tracker
+            for digit in state:
+                distribution_tracker[digit] += 1
+            
+            # Apply constraint
+            state, should_increase = constraint_func(state, should_increase, mod_base)
+            
+            # Apply mixing
+            state = mixing_func(state, mod_base)
+            
+            # Apply governor
+            state, intervention_made = governor_func(state, distribution_tracker, mod_base, 20, step)
+            if intervention_made:
+                governor_interventions += 1
+        
+        # Measure complexity
+        complexity_metrics = self.measure_behavioral_complexity(trajectory, mod_base, steps)
+        
+        # Calculate CPR
+        cpr = self.calculate_cpr(config_size, mod_base)
+        
+        return {
+            'config_size': config_size,
+            'mod_base': mod_base,
+            'constraint_type': constraint_type,
+            'mixing_type': mixing_type,
+            'governor_type': governor_type,
+            'cpr': cpr,
+            'governor_interventions': governor_interventions,
+            **complexity_metrics
+        }
+    
+    def systematic_architecture_test(self):
+        """Test multiple architectures systematically"""
+        
+        print("="*80)
+        print("UNIVERSAL CONSTRAINT-COMPLEXITY RELATIONSHIP TESTING")
+        print("="*80)
+        print("Testing systematic variation of:")
+        print("- Configuration sizes: 6, 8, 10, 12, 15, 18, 20, 25, 30")
+        print("- Modular bases: 7, 11, 13, 17, 19")
+        print("- Constraint types: 4 different mechanisms")
+        print("- Mixing types: 4 different functions")
+        print("- Governor types: 2 different strategies")
+        print()
+        
+        # Test configurations spanning the critical threshold
+        test_configs = [
+            # Small configurations (high CPR - should show constrained behavior)
+            (6, 7), (8, 7), (6, 11), (8, 11),
+            # Medium configurations (around critical threshold)  
+            (10, 7), (12, 11), (10, 13), (12, 13),
+            # Large configurations (low CPR - should show emergent behavior)
+            (15, 11), (20, 13), (18, 17), (25, 19), (30, 23)
+        ]
+        
+        all_results = []
+        
+        print(f"Testing {len(test_configs)} configurations across multiple constraint types...")
+        print()
+        
+        # Test each architecture combination
+        constraint_types = ['adjacent_duplicates', 'sum_limits', 'pattern_prohibition', 'local_entropy']
+        mixing_types = ['additive', 'multiplicative', 'triple_sum']
+        governor_types = ['uniform_distribution', 'entropy_maximization']
+        
+        total_experiments = len(test_configs) * len(constraint_types) * len(mixing_types) * len(governor_types)
+        experiment_count = 0
+        
+        print(f"Total experiments to run: {total_experiments}")
+        print(f"{'Config':<12} {'Constraint':<18} {'Mixing':<15} {'Governor':<18} {'CPR':<12} {'Complexity':<12} {'Exploration'}")
+        print("-" * 110)
+        
+        for config_size, mod_base in test_configs:
+            for constraint_type in constraint_types:
+                for mixing_type in mixing_types:
+                    for governor_type in governor_types:
+                        experiment_count += 1
+                        
+                        print(f"Running experiment {experiment_count}/{total_experiments}... ", end="", flush=True)
+                        
+                        try:
+                            result = self.run_system_experiment(
+                                config_size, mod_base, constraint_type, 
+                                mixing_type, governor_type, steps=3000
+                            )
+                            all_results.append(result)
+                            
+                            config_str = f"{config_size},{mod_base}"
+                            print(f"\r{config_str:<12} {constraint_type:<18} {mixing_type:<15} {governor_type:<18} " +
+                                  f"{result['cpr']:<12.2e} {result['complexity_score']:<12.4f} {result['exploration_ratio']:<12.4f}")
+                            
+                        except Exception as e:
+                            print(f"\rERROR in experiment {experiment_count}: {e}")
+                            continue
+        
+        print(f"\nCompleted {len(all_results)} successful experiments")
+        return all_results
+
+def load_test_data():
+    """
+    Load or generate test data that resembles the phase transition data described in the sources.
+    """
+    # Create a range of log10(CPR) values centered around the critical point (-8.3)
+    x_data = np.linspace(-12, -4, 70)  # 70 data points as mentioned in the document
+    
+    # Generate exploration scores based on the sigmoid with parameters from the source
+    # L=0.8513, k=46.7978, x0=-8.2999
+    true_L, true_k, true_x0 = 0.8513, 46.7978, -8.2999
+    true_y = sigmoid(x_data, true_L, true_k, true_x0)
+    
+    # Add some realistic noise
+    np.random.seed(42)  # For reproducibility
+    noise = np.random.normal(0, 0.02, len(x_data))  # Small noise to simulate real data
+    y_data = true_y + noise
+    
+    # Ensure values stay in the valid range [0, 1] for exploration scores
+    y_data = np.clip(y_data, 0, 1)
+    
+    return x_data, y_data
+
+# Main testing function
+def test_models(x_data, y_data, plot=True):
+    """Test all models against the data and compare their performance"""
+    
+    # Define initial parameter guesses based on the source documents
+    models = {
+        'sigmoid': (sigmoid, [0.85, 47, -8.3]),
+        'linear': (linear, [0.1, 0.5]),
+        'exponential': (exponential, [0.01, 1]),
+        'power_law': (power_law, [1, 2]),
+        'offset_sigmoid': (offset_sigmoid, [0.85, 47, -8.3, 0]),
+        'double_sigmoid': (double_sigmoid, [0.5, 30, -8, 0.5, 30, -6])
+    }
+    
+    results = {}
+    fitted_params = {}
+    
+    for name, (func, p0) in models.items():
+        try:
+            # Fit the model
+            popt, pcov = curve_fit(func, x_data, y_data, p0=p0, maxfev=10000)
+            fitted_params[name] = popt
+            
+            # Calculate predictions
+            predictions = func(x_data, *popt)
+            
+            # Calculate metrics
+            rss = np.sum((y_data - predictions)**2)
+            tss = np.sum((y_data - np.mean(y_data))**2)
+            n = len(x_data)
+            k = len(p0)
+            r2 = 1 - rss/tss
+            
+            results[name] = {
+                'aic': calculate_aic(n, rss, k),
+                'bic': calculate_bic(n, rss, k),
+                'r2': r2,
+                'adj_r2': calculate_adjusted_r2(r2, n, k),
+                'rss': rss,
+                'params': len(p0)
+            }
+        except Exception as e:
+            print(f"Error fitting {name}: {e}")
+            results[name] = {
+                'aic': np.inf,
+                'bic': np.inf,
+                'r2': 0,
+                'adj_r2': 0,
+                'rss': np.inf,
+                'params': len(p0),
+                'error': str(e)
+            }
+    
+    # Print results sorted by AIC (best first)
+    print("\n=== MODEL COMPARISON RESULTS ===")
+    print(f"{'Model':<20} {'AIC':>10} {'BIC':>10} {'R²':>10} {'Adj.R²':>10} {'Params':>8}")
+    print("-" * 70)
+    
+    for name, metrics in sorted(results.items(), key=lambda x: x[1]['aic']):
+        print(f"{name:<20} {metrics['aic']:>10.2f} {metrics['bic']:>10.2f} {metrics['r2']:>10.4f} {metrics['adj_r2']:>10.4f} {metrics['params']:>8}")
+    
+    # Identify the best model by AIC
+    best_model = min(results.items(), key=lambda x: x[1]['aic'])[0]
+    print(f"\nBest model by AIC: {best_model}")
+    
+    # Compare the best model with the sigmoid (if different)
+    if best_model != 'sigmoid':
+        delta_aic = results[best_model]['aic'] - results['sigmoid']['aic']
+        print(f"Difference in AIC between best model and sigmoid: {delta_aic:.2f}")
+        if abs(delta_aic) > 10:
+            print("The difference is significant (ΔA > 10)")
+        else:
+            print("The difference is NOT significant (ΔA < 10)")
+    
+    # Plot the data and fitted models if requested
+    if plot:
+        plt.figure(figsize=(12, 8))
+        # Plot the actual data
+        plt.scatter(x_data, y_data, color='black', s=30, label='Experimental data')
+        
+        # Plot model fits
+        x_smooth = np.linspace(min(x_data), max(x_data), 500)
+        colors = ['red', 'blue', 'green', 'orange', 'purple', 'brown']
+        
+        for i, (name, (func, _)) in enumerate(models.items()):
+            if name in fitted_params:
+                try:
+                    y_fit = func(x_smooth, *fitted_params[name])
+                    plt.plot(x_smooth, y_fit, color=colors[i % len(colors)], 
+                             linewidth=2, label=f'{name} (AIC: {results[name]["aic"]:.1f})')
+                except Exception as e:
+                    print(f"Error plotting {name}: {e}")
+        
+        plt.xlabel('log10(CPR)', fontsize=14)
+        plt.ylabel('Exploration Score', fontsize=14)
+        plt.title('Model Comparison for Phase Transition Data', fontsize=16)
+        plt.legend(loc='best', fontsize=12)
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig('model_comparison.png', dpi=300)
+        plt.show()
+    
+    return results, fitted_params
+
+if __name__ == "__main__":
+    # Load or generate test data
+    x_data, y_data = load_test_data()
+    
+    # Run the model comparison
+    results, params = test_models(x_data, y_data)
+    
+    # Print the fitted parameters for the sigmoid model
+    if 'sigmoid' in params:
+        L, k, x0 = params['sigmoid']
+        print(f"\nFitted sigmoid parameters:")
+        print(f"L (Maximum Exploration): {L:.4f}")
+        print(f"k (Steepness): {k:.4f}")
+        print(f"x0 (Midpoint): {x0:.4f}")
+        print(f"Critical CPR: {10**x0:.2e}")
+
+Falsification criterion:
+If offset_sigmoid or double_sigmoid has significantly better AIC (ΔA > 10), the 3-parameter sigmoid might be insufficient.
+
+---
+
+B. Cross-validation: Hold-out testing
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+from sklearn.model_selection import KFold
+from sklearn.metrics import r2_score
+
+# Define the sigmoid function as described in the sources
+def sigmoid(x, L, k, x0):
+    return L / (1 + np.exp(-k * (x - x0)))
+
+# Function to load or generate test data
+def load_test_data():
+  class UniversalConstraintTester:
+    """
+    Comprehensive framework for testing constraint-complexity relationships
+    across multiple discrete dynamical system architectures
+    """
+    
+    def __init__(self):
+        self.results_database = {}
+        self.universal_patterns = {}
+        
+    def constraint_corrector_adjacent_duplicates(self, state, should_increase, mod_base):
+        """Your original adjacent duplicate elimination (Source: RNG.docx)"""
+        local_state = list(state)
+        local_should_increase = should_increase
+        iterations = 0
+        max_iterations = 100
+        
+        while iterations < max_iterations:
+            changes_made = False
+            for i in range(len(local_state)):
+                if local_state[i] == local_state[(i + 1) % len(local_state)]:
+                    if local_should_increase:
+                        local_state[i] = (local_state[i] + 1) % mod_base
+                    else:
+                        local_state[i] = (local_state[i] - 1 + mod_base) % mod_base
+                    local_should_increase = not local_should_increase
+                    changes_made = True
+                    break
+            
+            if not changes_made:
+                break
+            iterations += 1
+        
+        return local_state, local_should_increase
+    
+    def constraint_sum_limits(self, state, should_increase, mod_base, max_sum=None):
+        """Alternative constraint: Limit sum of adjacent pairs"""
+        if max_sum is None:
+            max_sum = mod_base - 1
+            
+        local_state = list(state)
+        local_should_increase = should_increase
+        
+        for iteration in range(50):
+            changes_made = False
+            for i in range(len(local_state)):
+                pair_sum = local_state[i] + local_state[(i + 1) % len(local_state)]
+                if pair_sum > max_sum:
+                    if local_should_increase:
+                        local_state[i] = max(0, local_state[i] - 1)
+                    else:
+                        local_state[(i + 1) % len(local_state)] = max(0, local_state[(i + 1) % len(local_state)] - 1)
+                    local_should_increase = not local_should_increase
+                    changes_made = True
+                    break
+            
+            if not changes_made:
+                break
+        
+        return local_state, local_should_increase
+    
+    def constraint_pattern_prohibition(self, state, should_increase, mod_base, forbidden_patterns=None):
+        """Constraint: Prohibit specific subsequence patterns"""
+        if forbidden_patterns is None:
+            forbidden_patterns = [[0, 0, 0], [1, 1, 1]]  # Prohibit triple repeats
+            
+        local_state = list(state)
+        local_should_increase = should_increase
+        
+        for iteration in range(50):
+            changes_made = False
+            for pattern in forbidden_patterns:
+                pattern_len = len(pattern)
+                for i in range(len(local_state)):
+                    # Check if pattern occurs starting at position i
+                    matches = True
+                    for j in range(pattern_len):
+                        if local_state[(i + j) % len(local_state)] != pattern[j]:
+                            matches = False
+                            break
+                    
+                    if matches:
+                        # Modify first element of pattern
+                        if local_should_increase:
+                            local_state[i] = (local_state[i] + 1) % mod_base
+                        else:
+                            local_state[i] = (local_state[i] - 1 + mod_base) % mod_base
+                        local_should_increase = not local_should_increase
+                        changes_made = True
+                        break
+                
+                if changes_made:
+                    break
+            
+            if not changes_made:
+                break
+        
+        return local_state, local_should_increase
+    
+    def constraint_local_entropy(self, state, should_increase, mod_base, min_entropy=1.0):
+        """Constraint: Maintain minimum local entropy in sliding windows"""
+        local_state = list(state)
+        local_should_increase = should_increase
+        window_size = min(4, len(local_state))
+        
+        for iteration in range(30):
+            changes_made = False
+            for i in range(len(local_state)):
+                # Extract window
+                window = []
+                for j in range(window_size):
+                    window.append(local_state[(i + j) % len(local_state)])
+                
+                # Calculate entropy
+                counts = defaultdict(int)
+                for val in window:
+                    counts[val] += 1
+                
+                entropy = 0
+                for count in counts.values():
+                    if count > 0:
+                        p = count / window_size
+                        entropy -= p * math.log2(p)
+                
+                # If entropy too low, modify state
+                if entropy < min_entropy:
+                    if local_should_increase:
+                        local_state[i] = (local_state[i] + 1) % mod_base
+                    else:
+                        local_state[i] = (local_state[i] - 1 + mod_base) % mod_base
+                    local_should_increase = not local_should_increase
+                    changes_made = True
+                    break
+            
+            if not changes_made:
+                break
+        
+        return local_state, local_should_increase
+    
+    def mixing_function_additive(self, state, mod_base):
+        """Your original additive mixing (Source: RNG.docx)"""
+        return [(state[i] + state[(i + 1) % len(state)]) % mod_base 
+                for i in range(len(state))]
+    
+    def mixing_function_multiplicative(self, state, mod_base):
+        """Alternative: Multiplicative mixing"""
+        return [(state[i] * state[(i + 1) % len(state)]) % mod_base 
+                for i in range(len(state))]
+    
+    def mixing_function_xor(self, state, mod_base):
+        """Alternative: XOR-based mixing (for powers of 2)"""
+        if mod_base & (mod_base - 1) == 0:  # Power of 2
+            return [state[i] ^ state[(i + 1) % len(state)] 
+                    for i in range(len(state))]
+        else:
+            # Fallback to additive for non-powers of 2
+            return self.mixing_function_additive(state, mod_base)
+    
+    def mixing_function_triple_sum(self, state, mod_base):
+        """Alternative: Triple element mixing"""
+        return [(state[i] + state[(i + 1) % len(state)] + state[(i + 2) % len(state)]) % mod_base 
+                for i in range(len(state))]
+    
+    def governor_uniform_distribution(self, state, distribution_tracker, mod_base, intervention_freq=20, step_count=0):
+        """Your original governor (Source: RNG.docx)"""
+        if step_count % intervention_freq != 0 or step_count == 0:
+            return state, False
+        
+        # Find min and max frequency digits
+        min_digit = min(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+        max_digit = max(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+        
+        if min_digit != max_digit:
+            # Convert first occurrence of max to min
+            new_state = list(state)
+            for i in range(len(new_state)):
+                if new_state[i] == max_digit:
+                    new_state[i] = min_digit
+                    return new_state, True
+        
+        return state, False
+    
+    def governor_entropy_maximization(self, state, distribution_tracker, mod_base, intervention_freq=20, step_count=0):
+        """Alternative: Maximize overall entropy"""
+        if step_count % intervention_freq != 0 or step_count == 0:
+            return state, False
+        
+        # Calculate current entropy
+        total_count = sum(distribution_tracker.values())
+        if total_count == 0:
+            return state, False
+        
+        current_entropy = 0
+        for count in distribution_tracker.values():
+            if count > 0:
+                p = count / total_count
+                current_entropy -= p * math.log2(p)
+        
+        max_entropy = math.log2(mod_base)
+        
+        # If entropy is low, intervene
+        if current_entropy < 0.8 * max_entropy:
+            min_digit = min(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+            max_digit = max(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+            
+            if min_digit != max_digit:
+                new_state = list(state)
+                for i in range(len(new_state)):
+                    if new_state[i] == max_digit:
+                        new_state[i] = min_digit
+                        return new_state, True
+        
+        return state, False
+    
+    def calculate_cpr(self, config_size, mod_base):
+        """Calculate Constraint Pressure Ratio (Source: Scale Dependent Emergence document)"""
+        return config_size / (mod_base ** config_size)
+    
+    def measure_behavioral_complexity(self, trajectory, mod_base, steps):
+        """Comprehensive behavioral complexity measurement"""
+        
+        # Unique states
+        unique_states = len(set(tuple(state) for state in trajectory))
+        exploration_ratio = unique_states / steps
+        
+        # Cycle detection
+        seen_states = {}
+        cycle_length = None
+        for i, state in enumerate(trajectory):
+            state_key = tuple(state)
+            if state_key in seen_states:
+                cycle_length = i - seen_states[state_key]
+                break
+            seen_states[state_key] = i
+        
+        # State transition entropy
+        transitions = defaultdict(int)
+        for i in range(len(trajectory) - 1):
+            from_state = tuple(trajectory[i])
+            to_state = tuple(trajectory[i + 1])
+            transitions[(from_state, to_state)] += 1
+        
+        total_transitions = sum(transitions.values())
+        transition_entropy = 0
+        for count in transitions.values():
+            if count > 0:
+                p = count / total_transitions
+                transition_entropy -= p * math.log2(p)
+        
+        # Distribution uniformity (for states, not digits)
+        state_counts = defaultdict(int)
+        for state in trajectory:
+            state_counts[tuple(state)] += 1
+        
+        expected_count = steps / unique_states if unique_states > 0 else 0
+        variance = sum((count - expected_count) ** 2 for count in state_counts.values()) / unique_states if unique_states > 0 else 0
+        cv = math.sqrt(variance) / expected_count if expected_count > 0 else float('inf')
+        
+        return {
+            'unique_states': unique_states,
+            'exploration_ratio': exploration_ratio,
+            'cycle_length': cycle_length,
+            'transition_entropy': transition_entropy,
+            'distribution_cv': cv,
+            'complexity_score': exploration_ratio * math.log(max(1, transition_entropy))
+        }
+    
+    def run_system_experiment(self, config_size, mod_base, constraint_type, mixing_type, governor_type, steps=5000):
+        """Run single experiment with specified architecture"""
+        
+        # Initialize
+        state = [random.randint(0, mod_base - 1) for _ in range(config_size)]
+        should_increase = False
+        distribution_tracker = defaultdict(int)
+        trajectory = []
+        governor_interventions = 0
+        
+        # Map function types
+        constraint_functions = {
+            'adjacent_duplicates': self.constraint_corrector_adjacent_duplicates,
+            'sum_limits': self.constraint_sum_limits,
+            'pattern_prohibition': self.constraint_pattern_prohibition,
+            'local_entropy': self.constraint_local_entropy
+        }
+        
+        mixing_functions = {
+            'additive': self.mixing_function_additive,
+            'multiplicative': self.mixing_function_multiplicative,
+            'xor': self.mixing_function_xor,
+            'triple_sum': self.mixing_function_triple_sum
+        }
+        
+        governor_functions = {
+            'uniform_distribution': self.governor_uniform_distribution,
+            'entropy_maximization': self.governor_entropy_maximization
+        }
+        
+        constraint_func = constraint_functions[constraint_type]
+        mixing_func = mixing_functions[mixing_type]
+        governor_func = governor_functions[governor_type]
+        
+        # Run simulation
+        for step in range(steps):
+            trajectory.append(list(state))
+            
+            # Update distribution tracker
+            for digit in state:
+                distribution_tracker[digit] += 1
+            
+            # Apply constraint
+            state, should_increase = constraint_func(state, should_increase, mod_base)
+            
+            # Apply mixing
+            state = mixing_func(state, mod_base)
+            
+            # Apply governor
+            state, intervention_made = governor_func(state, distribution_tracker, mod_base, 20, step)
+            if intervention_made:
+                governor_interventions += 1
+        
+        # Measure complexity
+        complexity_metrics = self.measure_behavioral_complexity(trajectory, mod_base, steps)
+        
+        # Calculate CPR
+        cpr = self.calculate_cpr(config_size, mod_base)
+        
+        return {
+            'config_size': config_size,
+            'mod_base': mod_base,
+            'constraint_type': constraint_type,
+            'mixing_type': mixing_type,
+            'governor_type': governor_type,
+            'cpr': cpr,
+            'governor_interventions': governor_interventions,
+            **complexity_metrics
+        }
+    
+    def systematic_architecture_test(self):
+        """Test multiple architectures systematically"""
+        
+        print("="*80)
+        print("UNIVERSAL CONSTRAINT-COMPLEXITY RELATIONSHIP TESTING")
+        print("="*80)
+        print("Testing systematic variation of:")
+        print("- Configuration sizes: 6, 8, 10, 12, 15, 18, 20, 25, 30")
+        print("- Modular bases: 7, 11, 13, 17, 19")
+        print("- Constraint types: 4 different mechanisms")
+        print("- Mixing types: 4 different functions")
+        print("- Governor types: 2 different strategies")
+        print()
+        
+        # Test configurations spanning the critical threshold
+        test_configs = [
+            # Small configurations (high CPR - should show constrained behavior)
+            (6, 7), (8, 7), (6, 11), (8, 11),
+            # Medium configurations (around critical threshold)  
+            (10, 7), (12, 11), (10, 13), (12, 13),
+            # Large configurations (low CPR - should show emergent behavior)
+            (15, 11), (20, 13), (18, 17), (25, 19), (30, 23)
+        ]
+        
+        all_results = []
+        
+        print(f"Testing {len(test_configs)} configurations across multiple constraint types...")
+        print()
+        
+        # Test each architecture combination
+        constraint_types = ['adjacent_duplicates', 'sum_limits', 'pattern_prohibition', 'local_entropy']
+        mixing_types = ['additive', 'multiplicative', 'triple_sum']
+        governor_types = ['uniform_distribution', 'entropy_maximization']
+        
+        total_experiments = len(test_configs) * len(constraint_types) * len(mixing_types) * len(governor_types)
+        experiment_count = 0
+        
+        print(f"Total experiments to run: {total_experiments}")
+        print(f"{'Config':<12} {'Constraint':<18} {'Mixing':<15} {'Governor':<18} {'CPR':<12} {'Complexity':<12} {'Exploration'}")
+        print("-" * 110)
+        
+        for config_size, mod_base in test_configs:
+            for constraint_type in constraint_types:
+                for mixing_type in mixing_types:
+                    for governor_type in governor_types:
+                        experiment_count += 1
+                        
+                        print(f"Running experiment {experiment_count}/{total_experiments}... ", end="", flush=True)
+                        
+                        try:
+                            result = self.run_system_experiment(
+                                config_size, mod_base, constraint_type, 
+                                mixing_type, governor_type, steps=3000
+                            )
+                            all_results.append(result)
+                            
+                            config_str = f"{config_size},{mod_base}"
+                            print(f"\r{config_str:<12} {constraint_type:<18} {mixing_type:<15} {governor_type:<18} " +
+                                  f"{result['cpr']:<12.2e} {result['complexity_score']:<12.4f} {result['exploration_ratio']:<12.4f}")
+                            
+                        except Exception as e:
+                            print(f"\rERROR in experiment {experiment_count}: {e}")
+                            continue
+        
+        print(f"\nCompleted {len(all_results)} successful experiments")
+        return all_results
+    # Create a range of log10(CPR) values centered around the critical point (-8.3)
+    x_data = np.linspace(-12, -4, 70)  # 70 data points as mentioned in the document
+    
+    # Generate exploration scores based on the sigmoid with parameters from the source
+    # L=0.8513, k=46.7978, x0=-8.2999
+    true_L, true_k, true_x0 = 0.8513, 46.7978, -8.2999
+    true_y = sigmoid(x_data, true_L, true_k, true_x0)
+    
+    # Add some realistic noise
+    np.random.seed(42)  # For reproducibility
+    noise = np.random.normal(0, 0.02, len(x_data))  # Small noise to simulate real data
+    y_data = true_y + noise
+    
+    # Ensure values stay in the valid range [0, 1] for exploration scores
+    y_data = np.clip(y_data, 0, 1)
+    
+  return x_data, y_data
+
+# Function to run cross-validation
+def run_cross_validation(x_data, y_data, n_splits=5):
+    """
+    Perform k-fold cross-validation on the sigmoid model to test its robustness.
+    
+    Parameters:
+    - x_data: array of log10(CPR) values
+    - y_data: array of corresponding exploration scores
+    - n_splits: number of folds for cross-validation
+    
+    Returns:
+    - train_r2: list of R² scores on training sets
+    - test_r2: list of R² scores on test sets
+    - all_params: list of fitted parameters for each fold
+    """
+    # 5-fold cross-validation
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+    
+    train_r2 = []
+    test_r2 = []
+    all_params = []
+    
+    for train_idx, test_idx in kf.split(x_data):
+        # Split data
+        x_train, x_test = x_data[train_idx], x_data[test_idx]
+        y_train, y_test = y_data[train_idx], y_data[test_idx]
+        
+        # Fit on training data
+        popt, _ = curve_fit(sigmoid, x_train, y_train, p0=[0.85, 47, -8.3])
+        all_params.append(popt)
+        
+        # Predict on both sets
+        y_train_pred = sigmoid(x_train, *popt)
+        y_test_pred = sigmoid(x_test, *popt)
+        
+        # Calculate R²
+        train_r2.append(r2_score(y_train, y_train_pred))
+        test_r2.append(r2_score(y_test, y_test_pred))
+    
+    return train_r2, test_r2, all_params
+
+# Function to analyze and visualize the cross-validation results
+def analyze_cv_results(train_r2, test_r2, all_params):
+    """
+    Analyze the cross-validation results and check against falsification criteria.
+    
+    Parameters:
+    - train_r2: list of R² scores on training sets
+    - test_r2: list of R² scores on test sets
+    - all_params: list of fitted parameters for each fold
+    """
+    # Calculate mean and std for R² scores
+    mean_train_r2 = np.mean(train_r2)
+    std_train_r2 = np.std(train_r2)
+    mean_test_r2 = np.mean(test_r2)
+    std_test_r2 = np.std(test_r2)
+    
+    # Print R² results
+    print(f"Training R²: {mean_train_r2:.4f} ± {std_train_r2:.4f}")
+    print(f"Test R²: {mean_test_r2:.4f} ± {std_test_r2:.4f}")
+    print(f"R² difference (Train - Test): {mean_train_r2 - mean_test_r2:.4f}")
+    
+    # Check falsification criterion for R²
+    r2_diff = mean_train_r2 - mean_test_r2
+    if r2_diff > 0.1:
+        print("\nFALSIFICATION: Test R² is significantly lower than Training R² (difference > 0.1)")
+        print("This suggests the model may be overfitting.")
+    else:
+        print("\nVALIDATION: Test R² is close to Training R² (difference < 0.1)")
+        print("This suggests the model generalizes well to unseen data.")
+    
+    # Convert parameters list to numpy array for easier analysis
+    params = np.array(all_params)
+    
+    # Calculate statistics for each parameter
+    param_names = ['L (Maximum)', 'k (Steepness)', 'x0 (Midpoint)']
+    critical_CPRs = 10**params[:, 2]  # Convert x0 to actual CPR values
+    
+    print("\nParameter Stability Across Folds:")
+    print("-" * 60)
+    print(f"{'Parameter':<15} {'Mean':<10} {'Std':<10} {'Min':<10} {'Max':<10} {'Range':<10}")
+    print("-" * 60)
+    
+    for i, name in enumerate(param_names):
+        param_values = params[:, i]
+        print(f"{name:<15} {np.mean(param_values):<10.4f} {np.std(param_values):<10.4f} "
+              f"{np.min(param_values):<10.4f} {np.max(param_values):<10.4f} "
+              f"{np.max(param_values) - np.min(param_values):<10.4f}")
+    
+    # Also print the critical CPR values
+    print(f"{'Critical CPR':<15} {np.mean(critical_CPRs):<10.2e} {np.std(critical_CPRs):<10.2e} "
+          f"{np.min(critical_CPRs):<10.2e} {np.max(critical_CPRs):<10.2e} "
+          f"{np.max(critical_CPRs) - np.min(critical_CPRs):<10.2e}")
+    
+    # Check falsification criterion for x0
+    x0_range = np.max(params[:, 2]) - np.min(params[:, 2])
+    if x0_range > 0.2:
+        print("\nFALSIFICATION: Midpoint parameter (x0) varies significantly across folds (range > 0.2)")
+        print("This suggests instability in identifying the critical point of the phase transition.")
+    else:
+        print("\nVALIDATION: Midpoint parameter (x0) is stable across folds (range < 0.2)")
+        print("This suggests the critical point of the phase transition is robustly identified.")
+    
+    # Visualize the parameters across folds
+    plt.figure(figsize=(15, 10))
+    
+    # Plot 1: Training vs Testing R²
+    plt.subplot(2, 2, 1)
+    plt.bar([1, 2], [mean_train_r2, mean_test_r2], yerr=[std_train_r2, std_test_r2],
+            color=['blue', 'orange'], alpha=0.7)
+    plt.xticks([1, 2], ['Training R²', 'Test R²'])
+    plt.ylim(0.8, 1.0)  # Assuming high R² values based on the sources
+    plt.title('Training vs Testing R² Comparison')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    
+    # Plot 2: Parameter values across folds
+    plt.subplot(2, 2, 2)
+    fold_indices = np.arange(len(all_params))
+    plt.errorbar(fold_indices, params[:, 0], yerr=0, fmt='o-', label='L (Maximum)')
+    plt.errorbar(fold_indices, params[:, 2], yerr=0, fmt='s-', label='x0 (Midpoint)')
+    plt.xlabel('Fold Index')
+    plt.ylabel('Parameter Value')
+    plt.title('Stability of Key Parameters Across Folds')
+    plt.legend()
+    plt.grid(linestyle='--', alpha=0.7)
+    
+    # Plot 3: Steepness parameter across folds (separate due to scale difference)
+    plt.subplot(2, 2, 3)
+    plt.errorbar(fold_indices, params[:, 1], yerr=0, fmt='^-', label='k (Steepness)')
+    plt.xlabel('Fold Index')
+    plt.ylabel('Steepness (k)')
+    plt.title('Stability of Steepness Parameter Across Folds')
+    plt.grid(linestyle='--', alpha=0.7)
+    
+    # Plot 4: Critical CPR across folds
+    plt.subplot(2, 2, 4)
+    plt.errorbar(fold_indices, critical_CPRs, yerr=0, fmt='D-', label='Critical CPR')
+    plt.xlabel('Fold Index')
+    plt.ylabel('Critical CPR Value (log scale)')
+    plt.title('Stability of Critical CPR Across Folds')
+    plt.yscale('log')
+    plt.grid(linestyle='--', alpha=0.7)
+    
+    plt.tight_layout()
+    plt.savefig('cross_validation_results.png', dpi=300)
+    plt.show()
+    
+    return {
+        'train_r2': train_r2,
+        'test_r2': test_r2,
+        'params': params,
+        'mean_train_r2': mean_train_r2,
+        'mean_test_r2': mean_test_r2,
+        'r2_diff': r2_diff,
+        'x0_range': x0_range,
+        'critical_CPRs': critical_CPRs
+    }
+
+# Main execution
+if __name__ == "__main__":
+    x_data = np.linspace(-12, -4, 70)
+    true_L, true_k, true_x0 = 0.8513, 46.7978, -8.2999
+    true_y = sigmoid(x_data, true_L, true_k, true_x0)
+    noise = np.random.normal(0, 0.02, len(x_data))
+    y_data = true_y + noise
+    x_data, y_data = load_test_data()
+    
+    # Run cross-validation
+    train_r2, test_r2, all_params = run_cross_validation(x_data, y_data)
+    
+    # Analyze and visualize the results
+    results = analyze_cv_results(train_r2, test_r2, all_params)
+    
+    # Additional fitting on the full dataset for reference
+    popt_full, _ = curve_fit(sigmoid, x_data, y_data, p0=[0.85, 47, -8.3])
+    print("\nFull dataset fit parameters:")
+    print(f"L (Maximum): {popt_full[0]:.4f}")
+    print(f"k (Steepness): {popt_full[1]:.4f}")
+    print(f"x0 (Midpoint): {popt_full[2]:.4f}")
+    print(f"Critical CPR: {10**popt_full[2]:.2e}")
+    
+    # Plot the full dataset with the fitted curve
+    plt.figure(figsize=(10, 6))
+    plt.scatter(x_data, y_data, color='black', alpha=0.7, label='Experimental Data')
+    
+    # Generate smooth curve from the fitted parameters
+    x_smooth = np.linspace(min(x_data), max(x_data), 500)
+    y_smooth = sigmoid(x_smooth, *popt_full)
+    plt.plot(x_smooth, y_smooth, 'r-', linewidth=2, label='Fitted Sigmoid Model')
+    
+    # Add critical point marker
+    plt.axvline(x=popt_full[2], color='blue', linestyle='--', alpha=0.7, 
+                label=f'Critical Point (log10(CPR)={popt_full[2]:.4f})')
+    
+    plt.xlabel('log10(CPR)')
+    plt.ylabel('Exploration Score')
+    plt.title('Universal Phase Transition in Constrained Discrete Dynamical Systems')
+    plt.legend()
+    plt.grid(linestyle='--', alpha=0.5)
+    plt.tight_layout()
+    plt.savefig('full_dataset_fit.png', dpi=300)
+    plt.show()
+
+Expected result if real:
+- Test R² close to training R² (difference < 0.05)
+- Parameters from different folds similar (x₀ varies by < 0.2)
+
+Falsification criterion:
+If test R² << training R² (difference > 0.1), you're overfitting.
+
+---
+
+C. Bootstrap confidence intervals
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+from scipy.stats import bootstrap
+import warnings
+warnings.filterwarnings('ignore')  # Suppress warnings from failed fits
+
+# Define the sigmoid function as described in the sources
+def sigmoid(x, L, k, x0):
+    return L / (1 + np.exp(-k * (x - x0)))
+
+# Function to load or generate test data
+def load_test_data():
+  class UniversalConstraintTester:
+    """
+    Comprehensive framework for testing constraint-complexity relationships
+    across multiple discrete dynamical system architectures
+    """
+    
+    def __init__(self):
+        self.results_database = {}
+        self.universal_patterns = {}
+        
+    def constraint_corrector_adjacent_duplicates(self, state, should_increase, mod_base):
+        """Your original adjacent duplicate elimination (Source: RNG.docx)"""
+        local_state = list(state)
+        local_should_increase = should_increase
+        iterations = 0
+        max_iterations = 100
+        
+        while iterations < max_iterations:
+            changes_made = False
+            for i in range(len(local_state)):
+                if local_state[i] == local_state[(i + 1) % len(local_state)]:
+                    if local_should_increase:
+                        local_state[i] = (local_state[i] + 1) % mod_base
+                    else:
+                        local_state[i] = (local_state[i] - 1 + mod_base) % mod_base
+                    local_should_increase = not local_should_increase
+                    changes_made = True
+                    break
+            
+            if not changes_made:
+                break
+            iterations += 1
+        
+        return local_state, local_should_increase
+    
+    def constraint_sum_limits(self, state, should_increase, mod_base, max_sum=None):
+        """Alternative constraint: Limit sum of adjacent pairs"""
+        if max_sum is None:
+            max_sum = mod_base - 1
+            
+        local_state = list(state)
+        local_should_increase = should_increase
+        
+        for iteration in range(50):
+            changes_made = False
+            for i in range(len(local_state)):
+                pair_sum = local_state[i] + local_state[(i + 1) % len(local_state)]
+                if pair_sum > max_sum:
+                    if local_should_increase:
+                        local_state[i] = max(0, local_state[i] - 1)
+                    else:
+                        local_state[(i + 1) % len(local_state)] = max(0, local_state[(i + 1) % len(local_state)] - 1)
+                    local_should_increase = not local_should_increase
+                    changes_made = True
+                    break
+            
+            if not changes_made:
+                break
+        
+        return local_state, local_should_increase
+    
+    def constraint_pattern_prohibition(self, state, should_increase, mod_base, forbidden_patterns=None):
+        """Constraint: Prohibit specific subsequence patterns"""
+        if forbidden_patterns is None:
+            forbidden_patterns = [[0, 0, 0], [1, 1, 1]]  # Prohibit triple repeats
+            
+        local_state = list(state)
+        local_should_increase = should_increase
+        
+        for iteration in range(50):
+            changes_made = False
+            for pattern in forbidden_patterns:
+                pattern_len = len(pattern)
+                for i in range(len(local_state)):
+                    # Check if pattern occurs starting at position i
+                    matches = True
+                    for j in range(pattern_len):
+                        if local_state[(i + j) % len(local_state)] != pattern[j]:
+                            matches = False
+                            break
+                    
+                    if matches:
+                        # Modify first element of pattern
+                        if local_should_increase:
+                            local_state[i] = (local_state[i] + 1) % mod_base
+                        else:
+                            local_state[i] = (local_state[i] - 1 + mod_base) % mod_base
+                        local_should_increase = not local_should_increase
+                        changes_made = True
+                        break
+                
+                if changes_made:
+                    break
+            
+            if not changes_made:
+                break
+        
+        return local_state, local_should_increase
+    
+    def constraint_local_entropy(self, state, should_increase, mod_base, min_entropy=1.0):
+        """Constraint: Maintain minimum local entropy in sliding windows"""
+        local_state = list(state)
+        local_should_increase = should_increase
+        window_size = min(4, len(local_state))
+        
+        for iteration in range(30):
+            changes_made = False
+            for i in range(len(local_state)):
+                # Extract window
+                window = []
+                for j in range(window_size):
+                    window.append(local_state[(i + j) % len(local_state)])
+                
+                # Calculate entropy
+                counts = defaultdict(int)
+                for val in window:
+                    counts[val] += 1
+                
+                entropy = 0
+                for count in counts.values():
+                    if count > 0:
+                        p = count / window_size
+                        entropy -= p * math.log2(p)
+                
+                # If entropy too low, modify state
+                if entropy < min_entropy:
+                    if local_should_increase:
+                        local_state[i] = (local_state[i] + 1) % mod_base
+                    else:
+                        local_state[i] = (local_state[i] - 1 + mod_base) % mod_base
+                    local_should_increase = not local_should_increase
+                    changes_made = True
+                    break
+            
+            if not changes_made:
+                break
+        
+        return local_state, local_should_increase
+    
+    def mixing_function_additive(self, state, mod_base):
+        """Your original additive mixing (Source: RNG.docx)"""
+        return [(state[i] + state[(i + 1) % len(state)]) % mod_base 
+                for i in range(len(state))]
+    
+    def mixing_function_multiplicative(self, state, mod_base):
+        """Alternative: Multiplicative mixing"""
+        return [(state[i] * state[(i + 1) % len(state)]) % mod_base 
+                for i in range(len(state))]
+    
+    def mixing_function_xor(self, state, mod_base):
+        """Alternative: XOR-based mixing (for powers of 2)"""
+        if mod_base & (mod_base - 1) == 0:  # Power of 2
+            return [state[i] ^ state[(i + 1) % len(state)] 
+                    for i in range(len(state))]
+        else:
+            # Fallback to additive for non-powers of 2
+            return self.mixing_function_additive(state, mod_base)
+    
+    def mixing_function_triple_sum(self, state, mod_base):
+        """Alternative: Triple element mixing"""
+        return [(state[i] + state[(i + 1) % len(state)] + state[(i + 2) % len(state)]) % mod_base 
+                for i in range(len(state))]
+    
+    def governor_uniform_distribution(self, state, distribution_tracker, mod_base, intervention_freq=20, step_count=0):
+        """Your original governor (Source: RNG.docx)"""
+        if step_count % intervention_freq != 0 or step_count == 0:
+            return state, False
+        
+        # Find min and max frequency digits
+        min_digit = min(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+        max_digit = max(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+        
+        if min_digit != max_digit:
+            # Convert first occurrence of max to min
+            new_state = list(state)
+            for i in range(len(new_state)):
+                if new_state[i] == max_digit:
+                    new_state[i] = min_digit
+                    return new_state, True
+        
+        return state, False
+    
+    def governor_entropy_maximization(self, state, distribution_tracker, mod_base, intervention_freq=20, step_count=0):
+        """Alternative: Maximize overall entropy"""
+        if step_count % intervention_freq != 0 or step_count == 0:
+            return state, False
+        
+        # Calculate current entropy
+        total_count = sum(distribution_tracker.values())
+        if total_count == 0:
+            return state, False
+        
+        current_entropy = 0
+        for count in distribution_tracker.values():
+            if count > 0:
+                p = count / total_count
+                current_entropy -= p * math.log2(p)
+        
+        max_entropy = math.log2(mod_base)
+        
+        # If entropy is low, intervene
+        if current_entropy < 0.8 * max_entropy:
+            min_digit = min(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+            max_digit = max(range(mod_base), key=lambda d: distribution_tracker.get(d, 0))
+            
+            if min_digit != max_digit:
+                new_state = list(state)
+                for i in range(len(new_state)):
+                    if new_state[i] == max_digit:
+                        new_state[i] = min_digit
+                        return new_state, True
+        
+        return state, False
+    
+    def calculate_cpr(self, config_size, mod_base):
+        """Calculate Constraint Pressure Ratio (Source: Scale Dependent Emergence document)"""
+        return config_size / (mod_base ** config_size)
+    
+    def measure_behavioral_complexity(self, trajectory, mod_base, steps):
+        """Comprehensive behavioral complexity measurement"""
+        
+        # Unique states
+        unique_states = len(set(tuple(state) for state in trajectory))
+        exploration_ratio = unique_states / steps
+        
+        # Cycle detection
+        seen_states = {}
+        cycle_length = None
+        for i, state in enumerate(trajectory):
+            state_key = tuple(state)
+            if state_key in seen_states:
+                cycle_length = i - seen_states[state_key]
+                break
+            seen_states[state_key] = i
+        
+        # State transition entropy
+        transitions = defaultdict(int)
+        for i in range(len(trajectory) - 1):
+            from_state = tuple(trajectory[i])
+            to_state = tuple(trajectory[i + 1])
+            transitions[(from_state, to_state)] += 1
+        
+        total_transitions = sum(transitions.values())
+        transition_entropy = 0
+        for count in transitions.values():
+            if count > 0:
+                p = count / total_transitions
+                transition_entropy -= p * math.log2(p)
+        
+        # Distribution uniformity (for states, not digits)
+        state_counts = defaultdict(int)
+        for state in trajectory:
+            state_counts[tuple(state)] += 1
+        
+        expected_count = steps / unique_states if unique_states > 0 else 0
+        variance = sum((count - expected_count) ** 2 for count in state_counts.values()) / unique_states if unique_states > 0 else 0
+        cv = math.sqrt(variance) / expected_count if expected_count > 0 else float('inf')
+        
+        return {
+            'unique_states': unique_states,
+            'exploration_ratio': exploration_ratio,
+            'cycle_length': cycle_length,
+            'transition_entropy': transition_entropy,
+            'distribution_cv': cv,
+            'complexity_score': exploration_ratio * math.log(max(1, transition_entropy))
+        }
+    
+    def run_system_experiment(self, config_size, mod_base, constraint_type, mixing_type, governor_type, steps=5000):
+        """Run single experiment with specified architecture"""
+        
+        # Initialize
+        state = [random.randint(0, mod_base - 1) for _ in range(config_size)]
+        should_increase = False
+        distribution_tracker = defaultdict(int)
+        trajectory = []
+        governor_interventions = 0
+        
+        # Map function types
+        constraint_functions = {
+            'adjacent_duplicates': self.constraint_corrector_adjacent_duplicates,
+            'sum_limits': self.constraint_sum_limits,
+            'pattern_prohibition': self.constraint_pattern_prohibition,
+            'local_entropy': self.constraint_local_entropy
+        }
+        
+        mixing_functions = {
+            'additive': self.mixing_function_additive,
+            'multiplicative': self.mixing_function_multiplicative,
+            'xor': self.mixing_function_xor,
+            'triple_sum': self.mixing_function_triple_sum
+        }
+        
+        governor_functions = {
+            'uniform_distribution': self.governor_uniform_distribution,
+            'entropy_maximization': self.governor_entropy_maximization
+        }
+        
+        constraint_func = constraint_functions[constraint_type]
+        mixing_func = mixing_functions[mixing_type]
+        governor_func = governor_functions[governor_type]
+        
+        # Run simulation
+        for step in range(steps):
+            trajectory.append(list(state))
+            
+            # Update distribution tracker
+            for digit in state:
+                distribution_tracker[digit] += 1
+            
+            # Apply constraint
+            state, should_increase = constraint_func(state, should_increase, mod_base)
+            
+            # Apply mixing
+            state = mixing_func(state, mod_base)
+            
+            # Apply governor
+            state, intervention_made = governor_func(state, distribution_tracker, mod_base, 20, step)
+            if intervention_made:
+                governor_interventions += 1
+        
+        # Measure complexity
+        complexity_metrics = self.measure_behavioral_complexity(trajectory, mod_base, steps)
+        
+        # Calculate CPR
+        cpr = self.calculate_cpr(config_size, mod_base)
+        
+        return {
+            'config_size': config_size,
+            'mod_base': mod_base,
+            'constraint_type': constraint_type,
+            'mixing_type': mixing_type,
+            'governor_type': governor_type,
+            'cpr': cpr,
+            'governor_interventions': governor_interventions,
+            **complexity_metrics
+        }
+    
+    def systematic_architecture_test(self):
+        """Test multiple architectures systematically"""
+        
+        print("="*80)
+        print("UNIVERSAL CONSTRAINT-COMPLEXITY RELATIONSHIP TESTING")
+        print("="*80)
+        print("Testing systematic variation of:")
+        print("- Configuration sizes: 6, 8, 10, 12, 15, 18, 20, 25, 30")
+        print("- Modular bases: 7, 11, 13, 17, 19")
+        print("- Constraint types: 4 different mechanisms")
+        print("- Mixing types: 4 different functions")
+        print("- Governor types: 2 different strategies")
+        print()
+        
+        # Test configurations spanning the critical threshold
+        test_configs = [
+            # Small configurations (high CPR - should show constrained behavior)
+            (6, 7), (8, 7), (6, 11), (8, 11),
+            # Medium configurations (around critical threshold)  
+            (10, 7), (12, 11), (10, 13), (12, 13),
+            # Large configurations (low CPR - should show emergent behavior)
+            (15, 11), (20, 13), (18, 17), (25, 19), (30, 23)
+        ]
+        
+        all_results = []
+        
+        print(f"Testing {len(test_configs)} configurations across multiple constraint types...")
+        print()
+        
+        # Test each architecture combination
+        constraint_types = ['adjacent_duplicates', 'sum_limits', 'pattern_prohibition', 'local_entropy']
+        mixing_types = ['additive', 'multiplicative', 'triple_sum']
+        governor_types = ['uniform_distribution', 'entropy_maximization']
+        
+        total_experiments = len(test_configs) * len(constraint_types) * len(mixing_types) * len(governor_types)
+        experiment_count = 0
+        
+        print(f"Total experiments to run: {total_experiments}")
+        print(f"{'Config':<12} {'Constraint':<18} {'Mixing':<15} {'Governor':<18} {'CPR':<12} {'Complexity':<12} {'Exploration'}")
+        print("-" * 110)
+        
+        for config_size, mod_base in test_configs:
+            for constraint_type in constraint_types:
+                for mixing_type in mixing_types:
+                    for governor_type in governor_types:
+                        experiment_count += 1
+                        
+                        print(f"Running experiment {experiment_count}/{total_experiments}... ", end="", flush=True)
+                        
+                        try:
+                            result = self.run_system_experiment(
+                                config_size, mod_base, constraint_type, 
+                                mixing_type, governor_type, steps=3000
+                            )
+                            all_results.append(result)
+                            
+                            config_str = f"{config_size},{mod_base}"
+                            print(f"\r{config_str:<12} {constraint_type:<18} {mixing_type:<15} {governor_type:<18} " +
+                                  f"{result['cpr']:<12.2e} {result['complexity_score']:<12.4f} {result['exploration_ratio']:<12.4f}")
+                            
+                        except Exception as e:
+                            print(f"\rERROR in experiment {experiment_count}: {e}")
+                            continue
+        
+        print(f"\nCompleted {len(all_results)} successful experiments")
+        return all_results
+    # Create a range of log10(CPR) values centered around the critical point (-8.3)
+    x_data = np.linspace(-12, -4, 70)  # 70 data points as mentioned in the document
+    
+    # Generate exploration scores based on the sigmoid with parameters from the source
+    # L=0.8513, k=46.7978, x0=-8.2999
+    true_L, true_k, true_x0 = 0.8513, 46.7978, -8.2999
+    true_y = sigmoid(x_data, true_L, true_k, true_x0)
+    
+    # Add some realistic noise
+    np.random.seed(42)  # For reproducibility
+    noise = np.random.normal(0, 0.02, len(x_data))  # Small noise to simulate real data
+    y_data = true_y + noise
+    
+    # Ensure values stay in the valid range [0, 1] for exploration scores
+    y_data = np.clip(y_data, 0, 1)
+  return x_data, y_data
+
+# Function to fit sigmoid and extract parameters for bootstrapping
+def fit_and_extract_params(x, y, indices):
+    """Fit sigmoid to resampled data"""
+    x_sample = x[indices]
+    y_sample = y[indices]
+    try:
+        popt, _ = curve_fit(sigmoid, x_sample, y_sample, 
+                            p0=[0.85, 47, -8.3],
+                            maxfev=10000)
+        return popt
+    except:
+        return [np.nan, np.nan, np.nan]
+
+# Function to run bootstrap analysis
+def run_bootstrap_analysis(x_data, y_data, n_bootstrap=10000):
+    """
+    Perform bootstrap resampling to estimate confidence intervals for the sigmoid parameters.
+    
+    Parameters:
+    - x_data: array of log10(CPR) values
+    - y_data: array of corresponding exploration scores
+    - n_bootstrap: number of bootstrap resamples
+    
+    Returns:
+    - params: array of fitted parameters for each successful bootstrap
+    - ci_results: dictionary with confidence intervals for each parameter
+    """
+    # Bootstrap n_bootstrap times
+    params = []
+    for i in range(n_bootstrap):
+        # Progress indicator every 1000 iterations
+        if i % 1000 == 0:
+            print(f"Bootstrapping progress: {i}/{n_bootstrap}")
+            
+        # Generate bootstrap sample (with replacement)
+        indices = np.random.choice(len(x_data), len(x_data), replace=True)
+        popt = fit_and_extract_params(x_data, y_data, indices)
+        
+        # Only keep valid parameter sets
+        if not np.any(np.isnan(popt)):
+            params.append(popt)
+    
+    params = np.array(params)
+    print(f"Successfully fitted {len(params)} out of {n_bootstrap} bootstrap samples")
+    
+    # Calculate means and 95% confidence intervals
+    L_mean = np.mean(params[:,0])
+    k_mean = np.mean(params[:,1])
+    x0_mean = np.mean(params[:,2])
+    
+    L_ci = np.percentile(params[:,0], [2.5, 97.5])
+    k_ci = np.percentile(params[:,1], [2.5, 97.5])
+    x0_ci = np.percentile(params[:,2], [2.5, 97.5])
+    
+    # Calculate critical CPR values from x0
+    critical_CPR_mean = 10**x0_mean
+    critical_CPR_ci = 10**np.array(x0_ci)
+    
+    # Print results
+    print("\nBootstrap Analysis Results (95% Confidence Intervals):")
+    print("-" * 60)
+    print(f"L = {L_mean:.4f} [{L_ci[0]:.4f}, {L_ci[1]:.4f}]")
+    print(f"k = {k_mean:.4f} [{k_ci[0]:.4f}, {k_ci[1]:.4f}]")
+    print(f"x0 = {x0_mean:.4f} [{x0_ci[0]:.4f}, {x0_ci[1]:.4f}]")
+    print(f"Critical CPR = {critical_CPR_mean:.4e} [{critical_CPR_ci[0]:.4e}, {critical_CPR_ci[1]:.4e}]")
+    
+    # Check falsification criteria
+    x0_width = x0_ci[1] - x0_ci[0]
+    k_width = k_ci[1] - k_ci[0]
+    L_width = L_ci[1] - L_ci[0]
+    
+    print("\nValidation Against Falsification Criteria:")
+    print("-" * 60)
+    
+    # Check x0 criterion
+    if x0_width > 1.0:
+        print(f"FALSIFICATION: x0 confidence interval is too wide: {x0_width:.4f} > 1.0")
+        print("The midpoint estimate is unreliable.")
+    else:
+        print(f"VALIDATION: x0 confidence interval is tight: {x0_width:.4f} < 1.0")
+        print(f"The critical point estimate is reliable (interval width: {x0_width:.4f}).")
+    
+    # Additional checks for k and L
+    if k_width > 5.0:
+        print(f"NOTE: k confidence interval width ({k_width:.4f}) exceeds 5.0")
+    else:
+        print(f"VALIDATION: k confidence interval is tight: {k_width:.4f} < 5.0")
+    
+    if L_width > 0.05:
+        print(f"NOTE: L confidence interval width ({L_width:.4f}) exceeds 0.05")
+    else:
+        print(f"VALIDATION: L confidence interval is tight: {L_width:.4f} < 0.05")
+    
+    # Store results for return
+    ci_results = {
+        'L': {'mean': L_mean, 'ci': L_ci, 'width': L_width},
+        'k': {'mean': k_mean, 'ci': k_ci, 'width': k_width},
+        'x0': {'mean': x0_mean, 'ci': x0_ci, 'width': x0_width},
+        'critical_CPR': {'mean': critical_CPR_mean, 'ci': critical_CPR_ci}
+    }
+    
+    return params, ci_results
+
+# Function to visualize bootstrap results
+def visualize_bootstrap_results(x_data, y_data, params, ci_results):
+    """
+    Create visualizations of the bootstrap analysis results.
+    
+    Parameters:
+    - x_data: array of log10(CPR) values
+    - y_data: array of corresponding exploration scores
+    - params: array of fitted parameters for each bootstrap
+    - ci_results: dictionary with confidence intervals for each parameter
+    """
+    # Create figure
+    plt.figure(figsize=(15, 12))
+    
+    # Plot 1: Parameter distributions
+    param_names = ['L (Maximum)', 'k (Steepness)', 'x0 (Midpoint)']
+    
+    for i, name in enumerate(param_names):
+        plt.subplot(2, 2, i+1)
+        plt.hist(params[:,i], bins=50, alpha=0.7, color='steelblue')
+        plt.axvline(ci_results[name.split()[0].lower()]['mean'], color='red', linestyle='-', linewidth=2)
+        plt.axvline(ci_results[name.split()[0].lower()]['ci'][0], color='red', linestyle='--', linewidth=1)
+        plt.axvline(ci_results[name.split()[0].lower()]['ci'][1], color='red', linestyle='--', linewidth=1)
+        
+        plt.title(f'Distribution of {name} (Bootstrap n={len(params)})')
+        plt.xlabel(f'{name} Value')
+        plt.ylabel('Frequency')
+        plt.grid(alpha=0.3)
+    
+    # Plot 4: Fitted curves with confidence bands
+    plt.subplot(2, 2, 4)
+    
+    # Plot actual data points
+    plt.scatter(x_data, y_data, color='black', alpha=0.7, label='Data Points')
+    
+    # Create smooth x values for plotting
+    x_smooth = np.linspace(min(x_data), max(x_data), 500)
+    
+    # Generate 100 random curves from the bootstrap distributions to visualize uncertainty
+    np.random.seed(42)
+    random_indices = np.random.choice(len(params), 100, replace=False)
+    
+    for idx in random_indices:
+        y_curve = sigmoid(x_smooth, *params[idx])
+        plt.plot(x_smooth, y_curve, color='steelblue', alpha=0.02)
+    
+    # Plot the mean curve
+    L_mean = ci_results['L']['mean']
+    k_mean = ci_results['k']['mean']
+    x0_mean = ci_results['x0']['mean']
+    y_mean = sigmoid(x_smooth, L_mean, k_mean, x0_mean)
+    plt.plot(x_smooth, y_mean, color='red', linewidth=2, label='Mean Fit')
+    
+    # Add vertical line at critical point (x0)
+    plt.axvline(x=x0_mean, color='darkred', linestyle='--', alpha=0.7,
+                label=f'Critical Point (x0={x0_mean:.4f})')
+    
+    plt.title('Fitted Sigmoid with Bootstrap Uncertainty')
+    plt.xlabel('log10(CPR)')
+    plt.ylabel('Exploration Score')
+    plt.legend()
+    plt.grid(alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig('bootstrap_results.png', dpi=300)
+    plt.show()
+    
+    # Create a second figure to show the steepness around the critical point
+    plt.figure(figsize=(10, 6))
+    
+    # Zoom in on the critical region
+    x_zoom = np.linspace(x0_mean - 0.5, x0_mean + 0.5, 1000)
+    y_zoom = sigmoid(x_zoom, L_mean, k_mean, x0_mean)
+    
+    plt.plot(x_zoom, y_zoom, color='red', linewidth=2.5, label=f'Sigmoid (k={k_mean:.2f})')
+    plt.axvline(x=x0_mean, color='darkred', linestyle='--', alpha=0.7, 
+                label=f'Critical Point (x0={x0_mean:.4f})')
+    plt.axhline(y=0.5*L_mean, color='gray', linestyle=':', alpha=0.7, 
+                label=f'Half Maximum ({0.5*L_mean:.2f})')
+    
+    plt.title('Steepness of the Phase Transition')
+    plt.xlabel('log10(CPR)')
+    plt.ylabel('Exploration Score')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.savefig('transition_steepness.png', dpi=300)
+    plt.show()
+
+# Main execution
+if __name__ == "__main__":
+    # Load or generate test data
+    x_data = np.linspace(-12, -4, 70)  # 70 data points as mentioned in the document
+    true_L, true_k, true_x0 = 0.8513, 46.7978, -8.2999
+    true_y = sigmoid(x_data, true_L, true_k, true_x0)
+    np.random.seed(42)  # For reproducibility
+    noise = np.random.normal(0, 0.02, len(x_data))
+    y_data = true_y + noise
+    y_data = np.clip(y_data, 0, 1)
+    x_data, y_data = load_test_data()
+    
+    # Run bootstrap analysis
+    bootstrap_params, ci_results = run_bootstrap_analysis(x_data, y_data, n_bootstrap=10000)
+    
+    # Visualize the results
+    visualize_bootstrap_results(x_data, y_data, bootstrap_params, ci_results)
+    
+    # Fit on full dataset for comparison
+    popt_full, _ = curve_fit(sigmoid, x_data, y_data, p0=[0.85, 47, -8.3])
+    
+    print("\nFull dataset fit parameters:")
+    print(f"L (Maximum): {popt_full[0]:.4f}")
+    print(f"k (Steepness): {popt_full[1]:.4f}")
+    print(f"x0 (Midpoint): {popt_full[2]:.4f}")
+    print(f"Critical CPR: {10**popt_full[2]:.2e}")
+
+Expected result if real:
+- Tight confidence intervals (x₀ ± 0.1, k ± 5, L ± 0.05)
+- Parameters stable across resamples
+
+Falsification criterion:
+If confidence intervals are huge (x₀ ± 1 or more), your estimate is unreliable.
+
+---
+
+# Test 1.2: Is the Universality Real?
+
+
+B. Test data collapse
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+from scipy.optimize import curve_fit
+from matplotlib.colors import LinearSegmentedColormap
+import warnings
+warnings.filterwarnings('ignore')  # Suppress warnings from failed fits
+
+# Define the sigmoid function as described in the sources
+def sigmoid(x, L, k, x0):
+    return L / (1 + np.exp(-k * (x - x0)))
+
+# Function to generate synthetic data resembling the experimental data
+def generate_test_data():
+    """
+    Generate synthetic data that resembles the experimental data described in the sources,
+    with multiple bases and corresponding CPR values.
+    """
+    np.random.seed(42)  # For reproducibility
+    
+    # Define the bases we want to test
+    bases = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    
+    # Create a list to hold all the data points
+    data_points = []
+    
+    # For each base, generate data across a range of system sizes
+    for base in bases:
+        # Generate system sizes appropriate for this base
+        # For smaller bases, we need larger system sizes to reach the same CPR range
+        min_size = max(3, int(15 / np.log10(base)))  # Adjust minimum size based on base
+        max_size = min_size + 25  # Range of sizes to cover both regimes
+        
+        sizes = np.arange(min_size, max_size)
+        
+        # Calculate CPR for each size with this base
+        for n in sizes:
+            cpr = n / (base ** n)
+            log_cpr = np.log10(cpr)
+            
+            # Calculate the expected exploration based on the sigmoid model
+            # with the parameters from the sources: L=0.8513, k=46.7978, x0=-8.2999
+            true_exploration = sigmoid(log_cpr, 0.8513, 46.7978, -8.2999)
+            
+            # Add realistic noise to the exploration value
+            noise = np.random.normal(0, 0.03)
+            exploration = np.clip(true_exploration + noise, 0, 1)  # Keep within [0,1]
+            
+            # Add the data point to our list
+            data_points.append({
+                'base': base,
+                'size': n,
+                'CPR': cpr,
+                'log10_CPR': log_cpr,
+                'Exploration': exploration,
+                # Add multiple architectures for more realistic simulation
+                'architecture': np.random.choice(['A1', 'A2', 'A3', 'A4'])
+            })
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(data_points)
+    
+    return df
+
+# Function to perform data collapse analysis
+def perform_data_collapse(data, L=0.8513, k=46.7978, x0=-8.2999):
+    """
+    Perform a data collapse test for the universal phase transition.
+    
+    Parameters:
+    - data: DataFrame with columns 'CPR' and 'Exploration'
+    - L, k, x0: Parameters of the universal sigmoid function
+    
+    Returns:
+    - Dictionary with test results including R²
+    """
+    # Extract bases present in the data
+    bases = sorted(data['base'].unique())
+    
+    # Calculate normalized variables
+    x_star = (np.log10(data['CPR']) - x0) * k
+    y_star = data['Exploration'] / L
+    
+    # Calculate theoretical curve
+    x_theory = np.linspace(-10, 10, 1000)
+    y_theory = 1 / (1 + np.exp(-x_theory))
+    
+    # Predict using the universal curve
+    y_pred_theory = 1 / (1 + np.exp(-x_star))
+    
+    # Calculate R² to quantify collapse quality
+    collapse_r2 = 1 - np.sum((y_star - y_pred_theory)**2) / np.sum((y_star - np.mean(y_star))**2)
+    
+    # Create a custom colormap for different bases
+    colors = plt.cm.viridis(np.linspace(0, 1, len(bases)))
+    
+    # Plot the data collapse
+    plt.figure(figsize=(12, 8))
+    
+    # Create a plot for each base
+    for i, base in enumerate(bases):
+        mask = (data['base'] == base)
+        plt.scatter(x_star[mask], y_star[mask], 
+                    label=f'Base {base}', color=colors[i], alpha=0.7, s=40)
+    
+    # Plot the universal theoretical curve
+    plt.plot(x_theory, y_theory, 'k-', linewidth=3, label='Universal curve')
+    
+    # Add reference lines
+    plt.axhline(y=0.5, color='gray', linestyle='--', alpha=0.5)
+    plt.axvline(x=0, color='gray', linestyle='--', alpha=0.5)
+    
+    plt.xlabel('Scaled x* = k(log₁₀(CPR) - x₀)', fontsize=14)
+    plt.ylabel('Scaled E* = E/L', fontsize=14)
+    plt.title(f'Data Collapse Test for Universal Phase Transition\nCollapse Quality R²: {collapse_r2:.4f}', 
+              fontsize=16)
+    
+    # Improve legend presentation
+    plt.legend(loc='best', fontsize=10, ncol=2)
+    
+    # Add grid for better readability
+    plt.grid(alpha=0.3)
+    
+    # Set axis limits for better visualization
+    plt.xlim(-10, 10)
+    plt.ylim(-0.1, 1.2)
+    
+    # Add annotations explaining the test
+    if collapse_r2 > 0.98:
+        plt.annotate("✓ High collapse quality (R² > 0.98)\nStrong evidence for universality",
+                    xy=(0.05, 0.05), xycoords='figure fraction',
+                    bbox=dict(boxstyle="round,pad=0.5", fc="palegreen", ec="green", alpha=0.8),
+                    fontsize=12)
+    elif collapse_r2 > 0.90:
+        plt.annotate("⚠ Moderate collapse quality (0.90 < R² < 0.98)\nPartial support for universality",
+                    xy=(0.05, 0.05), xycoords='figure fraction',
+                    bbox=dict(boxstyle="round,pad=0.5", fc="khaki", ec="goldenrod", alpha=0.8),
+                    fontsize=12)
+    else:
+        plt.annotate("✗ Poor collapse quality (R² < 0.90)\nWeak evidence for universality",
+                    xy=(0.05, 0.05), xycoords='figure fraction',
+                    bbox=dict(boxstyle="round,pad=0.5", fc="lightcoral", ec="red", alpha=0.8),
+                    fontsize=12)
+    
+    plt.tight_layout()
+    plt.savefig('data_collapse_test.png', dpi=300)
+    plt.show()
+    
+    # Additional analysis: Calculate R² for each base separately
+    base_r2 = {}
+    for base in bases:
+        mask = (data['base'] == base)
+        if sum(mask) > 2:  # Need at least 3 points for meaningful R²
+            y_base = y_star[mask]
+            y_pred_base = y_pred_theory[mask]
+            r2 = 1 - np.sum((y_base - y_pred_base)**2) / np.sum((y_base - np.mean(y_base))**2)
+            base_r2[base] = r2
+    
+    # Print the collapse quality
+    print(f"Overall collapse quality R²: {collapse_r2:.4f}")
+    print("\nR² for individual bases:")
+    for base, r2 in base_r2.items():
+        print(f"Base {base}: R² = {r2:.4f}")
+    
+    # Evaluate the result against falsification criterion
+    if collapse_r2 < 0.90:
+        print("\n✗ FALSIFICATION: Data collapse quality is poor (R² < 0.90)")
+        print("This suggests the phase transition may not be universal across all bases,")
+        print("or that additional factors beyond CPR significantly influence the transition.")
+    elif collapse_r2 > 0.98:
+        print("\n✓ VALIDATION: Excellent data collapse quality (R² > 0.98)")
+        print("This strongly supports the universality of the phase transition across different bases.")
+    else:
+        print("\n⚠ PARTIAL VALIDATION: Moderate data collapse quality (0.90 < R² < 0.98)")
+        print("This provides some support for universality, but suggests architectural")
+        print("factors may influence the specific transition dynamics.")
+    
+    return {
+        'collapse_r2': collapse_r2,
+        'base_r2': base_r2,
+        'x_star': x_star,
+        'y_star': y_star,
+        'is_universal': collapse_r2 > 0.90
+    }
+
+# Function to perform residual analysis for collapsed data
+def analyze_collapse_residuals(data, collapse_results):
+    """
+    Analyze residuals from the data collapse to identify potential patterns or deviations.
+    
+    Parameters:
+    - data: DataFrame with the experimental data
+    - collapse_results: Results from the data collapse analysis
+    """
+    # Calculate residuals
+    y_pred = 1 / (1 + np.exp(-collapse_results['x_star']))
+    residuals = collapse_results['y_star'] - y_pred
+    
+    # Create a figure for residual analysis
+    plt.figure(figsize=(12, 10))
+    
+    # Plot 1: Residuals vs x*
+    plt.subplot(2, 1, 1)
+    bases = sorted(data['base'].unique())
+    colors = plt.cm.viridis(np.linspace(0, 1, len(bases)))
+    
+    for i, base in enumerate(bases):
+        mask = (data['base'] == base)
+        plt.scatter(collapse_results['x_star'][mask], residuals[mask], 
+                    label=f'Base {base}', color=colors[i], alpha=0.7)
+    
+    plt.axhline(y=0, color='black', linestyle='-', linewidth=1)
+    plt.xlabel('Scaled x* = k(log₁₀(CPR) - x₀)', fontsize=12)
+    plt.ylabel('Residuals (E* - predicted)', fontsize=12)
+    plt.title('Residuals Analysis', fontsize=14)
+    plt.grid(alpha=0.3)
+    plt.legend(loc='best', ncol=2)
+    
+    # Plot 2: Residuals distribution by base
+    plt.subplot(2, 1, 2)
+    
+    # Create box plots for residuals by base
+    base_residuals = []
+    base_labels = []
+    
+    for base in bases:
+        mask = (data['base'] == base)
+        if sum(mask) > 0:
+            base_residuals.append(residuals[mask])
+            base_labels.append(f'Base {base}')
+    
+    plt.boxplot(base_residuals, labels=base_labels)
+    plt.axhline(y=0, color='red', linestyle='--', linewidth=1)
+    plt.xlabel('Base', fontsize=12)
+    plt.ylabel('Residual Distribution', fontsize=12)
+    plt.title('Residual Distribution by Base', fontsize=14)
+    plt.grid(axis='y', alpha=0.3)
+    plt.xticks(rotation=45)
+    
+    plt.tight_layout()
+    plt.savefig('collapse_residuals.png', dpi=300)
+    plt.show()
+    
+    # Calculate statistics for residuals
+    mean_residual = np.mean(residuals)
+    std_residual = np.std(residuals)
+    
+    print("\nResidual Analysis:")
+    print(f"Mean residual: {mean_residual:.4f}")
+    print(f"Standard deviation: {std_residual:.4f}")
+    
+    # Check for systematic deviations
+    base_bias = {}
+    for base in bases:
+        mask = (data['base'] == base)
+        if sum(mask) > 0:
+            base_bias[base] = np.mean(residuals[mask])
+    
+    print("\nMean residual by base:")
+    for base, bias in base_bias.items():
+        print(f"Base {base}: {bias:.4f}")
+        
+    # Identify significant biases (>2 standard errors from zero)
+    significant_bias = any(abs(bias) > 2 * std_residual / np.sqrt(sum(data['base'] == base)) 
+                           for base, bias in base_bias.items())
+    
+    if significant_bias:
+        print("\n⚠ Note: Some bases show significant bias in residuals,")
+        print("suggesting potential systematic deviations from universality.")
+    else:
+        print("\nNo significant systematic bias detected in the residuals.")
+
+# Main execution
+if __name__ == "__main__":
+    # Generate or load the test data
+    data = generate_test_data()
+    
+    # Print basic information about the data
+    print(f"Generated {len(data)} data points across {data['base'].nunique()} different bases")
+    print(f"CPR range: {data['CPR'].min():.2e} to {data['CPR'].max():.2e}")
+    print(f"Exploration score range: {data['Exploration'].min():.4f} to {data['Exploration'].max():.4f}")
+    
+    # Perform the data collapse test with the parameters from the source
+    collapse_results = perform_data_collapse(data, L=0.8513, k=46.7978, x0=-8.2999)
+    
+    # Analyze residuals to check for systematic deviations
+    analyze_collapse_residuals(data, collapse_results)
+    
+    # Optionally, also test with best-fit parameters from this dataset
+    # This can help determine if minor parameter adjustments improve collapse
+    try:
+        # Fit the sigmoid to all data
+        popt, _ = curve_fit(sigmoid, np.log10(data['CPR']), data['Exploration'], 
+                            p0=[0.8513, 46.7978, -8.2999])
+        
+        print("\nBest-fit parameters for this dataset:")
+        print(f"L: {popt[0]:.4f}")
+        print(f"k: {popt[1]:.4f}")
+        print(f"x0: {popt[2]:.4f}")
+        
+        # Perform data collapse with fitted parameters
+        print("\nData collapse with fitted parameters:")
+        fitted_collapse = perform_data_collapse(data, L=popt[0], k=popt[1], x0=popt[2])
+        
+    except Exception as e:
+        print(f"\nCould not fit parameters to full dataset: {str(e)
+
+Expected result if universal:
+- All bases fall on same curve
+- R² > 0.98
+
+Falsification criterion:
+If data doesn't collapse (R² < 0.90), the universality is weak or nonexistent.
+
+
+
+# Test 2.2: Is Your Exploration Metric Correct?
+B. Check if exploration saturates
+import numpy as np
+import matplotlib.pyplot as plt
+from collections import defaultdict
+import pandas as pd
+import time
+import random
+from tqdm import tqdm
+import seaborn as sns
+
+class ConstrainedSystem:
+    """
+    Simulation of a constrained discrete dynamical system as described in the
+    Scale-Dependent Emergence theory documents.
+    """
+    def __init__(self, base, size, constraint_type='pattern_prohibition', 
+                 mixing_type='additive', governor_type='uniform_distribution', seed=42):
+        """
+        Initialize the system with the given parameters.
+        
+        Parameters:
+        - base: Number of possible states for each component (b)
+        - size: Number of components in the system (n)
+        - constraint_type: Type of constraint applied to the system
+        - mixing_type: How component states are combined
+        - governor_type: Strategy for exploring the state space
+        - seed: Random seed for reproducibility
+        """
+        self.base = base
+        self.size = size
+        self.constraint_type = constraint_type
+        self.mixing_type = mixing_type
+        self.governor_type = governor_type
+        self.cpr = size / (base ** size)  # Calculate CPR
+        
+        # Set random seed
+        random.seed(seed)
+        np.random.seed(seed)
+        
+        # Initialize state randomly
+        self.state = np.random.randint(0, base, size=size)
+        self.visited_states = set()
+        self.visited_states.add(tuple(self.state))
+        
+        # For tracking state history
+        self.state_history = [tuple(self.state)]
+    
+    def apply_constraint(self, proposed_state):
+        """Apply the specified constraint type to the proposed state."""
+        if self.constraint_type == 'pattern_prohibition':
+            # Simple pattern prohibition: no consecutive identical values
+            for i in range(1, len(proposed_state)):
+                if proposed_state[i] == proposed_state[i-1]:
+                    return False
+            return True
+            
+        elif self.constraint_type == 'local_entropy':
+            # Ensure local entropy by requiring diversity in neighborhoods
+            min_local_entropy = 0.5  # Threshold parameter
+            for i in range(len(proposed_state) - 2):
+                neighborhood = proposed_state[i:i+3]
+                unique = len(set(neighborhood))
+                if unique < 2:  # Require at least 2 unique values in each window
+                    return False
+            return True
+            
+        elif self.constraint_type == 'sum_modulation':
+            # Sum of states must be within certain modular constraints
+            state_sum = sum(proposed_state)
+            # Allow the sum to be in certain modular classes
+            return state_sum % 3 != 0  # Arbitrary modular constraint
+        
+        else:
+            # No constraint - always valid
+            return True
+    
+    def mix_components(self, state=None):
+        """Apply the specified mixing type to generate a new candidate state."""
+        if state is None:
+            state = self.state.copy()
+        
+        candidate = state.copy()
+        
+        # Apply different mixing strategies
+        if self.mixing_type == 'additive':
+            # Randomly select a component and increment it
+            idx = random.randrange(self.size)
+            candidate[idx] = (candidate[idx] + 1) % self.base
+            
+        elif self.mixing_type == 'multiplicative':
+            # Apply a multiplicative mixing
+            idx = random.randrange(self.size)
+            factor = random.randint(1, self.base-1)
+            candidate[idx] = (candidate[idx] * factor) % self.base
+            
+        elif self.mixing_type == 'triple_sum':
+            # Combine three randomly selected positions
+            if self.size >= 3:
+                indices = random.sample(range(self.size), 3)
+                for idx in indices:
+                    candidate[idx] = (candidate[idx] + 1) % self.base
+        
+        return candidate
+    
+    def apply_governor(self, candidates):
+        """Apply the specified governor strategy to select from valid candidates."""
+        if not candidates:  # If no valid candidates, stay in place
+            return self.state.copy()
+        
+        if self.governor_type == 'uniform_distribution':
+            # Uniform random selection from valid candidates
+            return random.choice(candidates)
+            
+        elif self.governor_type == 'entropy_maximization':
+            # Select candidate that maximizes entropy
+            # For simplicity, use the candidate with the most different values
+            best_candidate = max(candidates, key=lambda c: len(set(c)))
+            return best_candidate
+            
+        elif self.governor_type == 'novelty_seeking':
+            # Prefer states that haven't been visited
+            for candidate in candidates:
+                if tuple(candidate) not in self.visited_states:
+                    return candidate
+            # If all have been visited, choose randomly
+            return random.choice(candidates)
+        
+        # Default fallback
+        return random.choice(candidates)
+    
+    def step(self):
+        """Take a single step in the simulation."""
+        # Generate multiple candidates
+        candidates = []
+        for _ in range(10):  # Try multiple candidates to give the governor options
+            candidate = self.mix_components()
+            if self.apply_constraint(candidate):
+                candidates.append(candidate)
+        
+        # Apply governor to select next state
+        next_state = self.apply_governor(candidates)
+        
+        # Update state
+        self.state = next_state
+        self.visited_states.add(tuple(next_state))
+        self.state_history.append(tuple(next_state))
+    
+    def run(self, steps):
+        """Run the simulation for the specified number of steps."""
+        # Reset for a fresh run
+        self.state = np.random.randint(0, self.base, size=self.size)
+        self.visited_states = set([tuple(self.state)])
+        self.state_history = [tuple(self.state)]
+        
+        # Run the simulation
+        for _ in range(steps):
+            self.step()
+        
+        # Calculate exploration
+        exploration = len(self.visited_states) / min(steps + 1, self.base ** self.size)
+        
+        return self.state_history, exploration
+
+def run_simulation(base, size, seed=42, steps=10000, 
+                   constraint_type='pattern_prohibition', 
+                   mixing_type='additive', 
+                   governor_type='uniform_distribution'):
+    """
+    Run a single simulation with the specified parameters.
+    
+    Returns:
+    - state_history: List of states visited during the simulation
+    - exploration: Final exploration score
+    """
+    system = ConstrainedSystem(base, size, constraint_type, mixing_type, governor_type, seed)
+    state_history, exploration = system.run(steps)
+    return state_history, exploration
+
+def test_exploration_saturation(base, size, 
+                               steps_range=[100, 500, 1000, 5000, 10000, 50000],
+                               constraint_type='pattern_prohibition', 
+                               mixing_type='additive', 
+                               governor_type='uniform_distribution',
+                               seed=42,
+                               plot=True):
+    """
+    Test whether exploration saturates over time for a given configuration.
+    
+    Parameters:
+    - base: Number of possible states for each component
+    - size: Number of components in the system
+    - steps_range: List of simulation lengths to test
+    - constraint_type, mixing_type, governor_type: System architecture
+    - seed: Random seed for reproducibility
+    - plot: Whether to generate plots
+    
+    Returns:
+    - Dictionary with test results
+    """
+    print(f"Testing exploration saturation for Base {base}, Size {size}")
+    print(f"Architecture: {constraint_type}, {mixing_type}, {governor_type}")
+    
+    # Calculate CPR
+    cpr = size / (base ** size)
+    log_cpr = np.log10(cpr)
+    print(f"CPR: {cpr:.2e} (log10: {log_cpr:.2f})")
+    
+    # Predict exploration based on sigmoid model from sources
+    L, k, x0 = 0.8513, 46.7978, -8.2999
+    predicted_exploration = L / (1 + np.exp(-k * (log_cpr - x0)))
+    print(f"Predicted exploration (sigmoid model): {predicted_exploration:.4f}")
+    
+    # Run simulations for different step counts
+    explorations = []
+    exploration_efficiencies = []
+    unique_counts = []
+    
+    for num_steps in tqdm(steps_range):
+        states, _ = run_simulation(base, size, seed, steps=num_steps,
+                                  constraint_type=constraint_type,
+                                  mixing_type=mixing_type,
+                                  governor_type=governor_type)
+        
+        unique = len(set(states))
+        unique_counts.append(unique)
+        
+        # Calculate raw exploration (fraction of state space explored)
+        max_states = min(base ** size, 10**6)  # Cap for very large spaces
+        exp = unique / max_states
+        explorations.append(exp)
+        
+        # Calculate exploration efficiency (unique states per step)
+        exp_efficiency = unique / num_steps
+        exploration_efficiencies.append(exp_efficiency)
+    
+    # Detect if exploration is still increasing at the end
+    is_saturated = exploration_efficiencies[-1] < exploration_efficiencies[-2] * 1.05
+    
+    # Plot results if requested
+    if plot:
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 15))
+        
+        # Plot 1: Unique states vs time
+        ax1.plot(steps_range, unique_counts, 'o-', color='blue')
+        ax1.set_xlabel('Number of steps')
+        ax1.set_ylabel('Unique states visited')
+        ax1.set_title(f'Unique States vs Time (Base {base}, Size {size})')
+        ax1.grid(alpha=0.3)
+        
+        # Plot 2: Exploration efficiency vs time
+        ax2.plot(steps_range, exploration_efficiencies, 'o-', color='green')
+        ax2.set_xlabel('Number of steps')
+        ax2.set_ylabel('Exploration efficiency\n(unique states / steps)')
+        ax2.set_title('Exploration Efficiency vs Time')
+        ax2.grid(alpha=0.3)
+        
+        # Add saturation assessment
+        if is_saturated:
+            ax2.annotate('✓ Exploration appears to be saturating',
+                        xy=(0.05, 0.95), xycoords='axes fraction',
+                        bbox=dict(boxstyle="round,pad=0.5", fc="palegreen", ec="green", alpha=0.8),
+                        fontsize=12)
+        else:
+            ax2.annotate('⚠ Exploration may not be saturating yet.\nLonger simulation recommended.',
+                        xy=(0.05, 0.95), xycoords='axes fraction',
+                        bbox=dict(boxstyle="round,pad=0.5", fc="lightsalmon", ec="red", alpha=0.8),
+                        fontsize=12)
+        
+        # Plot 3: Raw exploration vs time (with prediction)
+        ax3.plot(steps_range, explorations, 'o-', color='purple')
+        ax3.axhline(y=predicted_exploration, color='red', linestyle='--', 
+                   label=f'Predicted ({predicted_exploration:.4f})')
+        ax3.set_xlabel('Number of steps')
+        ax3.set_ylabel('Exploration\n(fraction of state space)')
+        ax3.set_title('Exploration vs Time')
+        ax3.grid(alpha=0.3)
+        ax3.legend()
+        
+        plt.tight_layout()
+        plt.savefig(f'exploration_saturation_base{base}_size{size}.png', dpi=300)
+        plt.show()
+    
+    # Print summary
+    print("\nResults:")
+    print(f"Final exploration: {explorations[-1]:.4f}")
+    print(f"Final exploration efficiency: {exploration_efficiencies[-1]:.6f}")
+    
+    if is_saturated:
+        print("✓ Exploration appears to be saturating")
+    else:
+        print("⚠ Exploration may not be saturating yet. Longer simulation recommended.")
+    
+    # Compare with predicted exploration
+    if abs(explorations[-1] - predicted_exploration) < 0.1:
+        print("✓ Final exploration is close to predicted value")
+    else:
+        print(f"⚠ Final exploration differs from prediction by {abs(explorations[-1] - predicted_exploration):.4f}")
+    
+    # Return results
+    return {
+        'base': base,
+        'size': size,
+        'cpr': cpr,
+        'log_cpr': log_cpr,
+        'steps': steps_range,
+        'unique_counts': unique_counts,
+        'explorations': explorations,
+        'exploration_efficiencies': exploration_efficiencies,
+        'predicted_exploration': predicted_exploration,
+        'is_saturated': is_saturated
+    }
+
+def batch_test_saturation(configurations, steps_range=[100, 500, 1000, 5000, 10000, 50000]):
+    """
+    Test exploration saturation for multiple configurations.
+    
+    Parameters:
+    - configurations: List of tuples (base, size) to test
+    - steps_range: Range of simulation steps to test
+    
+    Returns:
+    - Dictionary of test results for each configuration
+    """
+    results = {}
+    
+    for base, size in configurations:
+        key = f"base{base}_size{size}"
+        
+        # Run the test
+        config_results = test_exploration_saturation(
+            base=base, size=size, steps_range=steps_range
+        )
+        
+        # Store results
+        results[key] = config_results
+        
+        # Clear plots between runs
+        plt.close('all')
+        
+        print("\n" + "="*50 + "\n")
+    
+    return results
+
+def plot_comparative_saturation(results):
+    """
+    Create a comparative plot of exploration saturation for multiple configurations.
+    
+    Parameters:
+    - results: Dictionary of test results from batch_test_saturation
+    """
+    plt.figure(figsize=(12, 8))
+    
+    # Color configurations by CPR
+    log_cprs = [results[key]['log_cpr'] for key in results]
+    colors = plt.cm.viridis(np.linspace(0, 1, len(results)))
+    
+    # Sort by CPR
+    sorted_items = sorted(results.items(), key=lambda x: x[1]['log_cpr'])
+    
+    for i, (key, result) in enumerate(sorted_items):
+        base = result['base']
+        size = result['size']
+        log_cpr = result['log_cpr']
+        
+        plt.plot(result['steps'], result['exploration_efficiencies'], 'o-', 
+                 color=colors[i], 
+                 label=f"Base {base}, Size {size} (log CPR: {log_cpr:.2f})")
+    
+    plt.xscale('log')
+    plt.xlabel('Number of Steps (log scale)')
+    plt.ylabel('Exploration Efficiency (unique states / steps)')
+    plt.title('Comparative Exploration Efficiency Across Configurations')
+    plt.grid(alpha=0.3)
+    plt.legend(title='Configuration', bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.tight_layout()
+    plt.savefig('comparative_saturation.png', dpi=300)
+    plt.show()
+
+if __name__ == "__main__":
+    # Define configurations to test
+    # Select examples from both constrained and emergent regimes
+    configurations = [
+        # Constrained regime (high CPR)
+        (3, 5),   # Small base, small size (high CPR)
+        (4, 7),   # Moderate CPR
+        
+        # Near critical point (CPR ≈ 5.01 x 10^-9)
+        (5, 13),  # Approaching critical point
+        
+        # Emergent regime (low CPR)
+        (6, 16),  # Large base, large size (low CPR)
+        (8, 18)   # Very low CPR
+    ]
+    
+    # Test a single configuration first
+    test_exploration_saturation(
+        base=4,
+        size=7,
+        steps_range=[100, 500, 1000, 5000, 10000, 50000, 100000],
+        constraint_type='pattern_prohibition',
+        mixing_type='additive',
+        governor_type='uniform_distribution',
+        seed=42
+    )
+    
+    # Run the batch test for multiple configurations
+    # Uncomment to run batch testing
+    # results = batch_test_saturation(configurations)
+    
+    # Create comparative plot
+    # Uncomment to create comparative plot
+    # plot_comparative_saturation(results)
+    
+    # You can also test a specific configuration with custom parameters
+    # For example, to test a system at the critical point with different architecture:
+    print("\nTesting a system near the critical point (CPR ≈ 5.01e-9):")
+    # Calculate required size for base=10 to achieve CPR near 5.01e-9
+    base = 10
+    # For CPR = n/(b^n) ≈ 5.01e-9, solve for n
+    # log(CPR) = log(n) - n*log(b)
+    # For b=10, log(b)=1, so n ≈ 9
+    size = 9
+    test_exploration_saturation(
+        base=base,
+        size=size,
+        steps_range=[100, 500, 1000, 5000, 10000, 50000, 100000],
+        constraint_type='pattern_prohibition',  # Try different constraints
+        mixing_type='additive',                # Try different mixing types
+        governor_type='uniform_distribution',   # Try different governors
+        seed=42
+    )
+# Test 2.3: Are Your Simulations Long Enough?
+Convergence Analysis:
+✓ At 1000.0 steps: 1.0010 (0.2% from final value)
+✓ At 2000.0 steps: 1.0005 (0.2% from final value)
+✓ At 5000.0 steps: 1.0000 (0.1% from final value)
+✓ At 10000.0 steps: 0.9998 (0.1% from final value)
+✓ At 20000.0 steps: 0.9997 (0.1% from final value)
+✓ At 50000.0 steps: 0.9990 (0.0% from final value)
+
+Summary Assessment:
+✓ Simulation converges within 5% after 1000.0 steps
+
+==================================================
+
+
+  0%|          | 0/6 [00:00<?, ?it/s]
+ 33%|███▎      | 2/6 [00:00<00:00, 15.07it/s]
+ 67%|██████▋   | 4/6 [00:00<00:00,  4.46it/s]
+ 83%|████████▎ | 5/6 [00:01<00:00,  2.36it/s]
+100%|██████████| 6/6 [00:04<00:00,  1.03s/it]
+100%|██████████| 6/6 [00:04<00:00,  1.44it/s]
+
+Expected result:
+- Exploration should plateau after ~5,000-10,000 steps
+- If still changing at 10,000 steps, you need longer simulations
+
+---
+
+ Attack Vector 3: Sampling Bias
+
+# Test 3.1: Are You Sampling CPR Space Uniformly?
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+from scipy.optimize import curve_fit
+
+def sigmoid(x, L, k, x0):
+    """
+    Sigmoid function that models the universal phase transition.
+    
+    Parameters:
+    - L: Maximum exploration value (≈ 0.8513 according to sources)
+    - k: Steepness of the transition (≈ 46.7978)
+    - x0: Midpoint of the transition (≈ -8.2999)
+    """
+    return L / (1 + np.exp(-k * (x - x0)))
+
+def generate_test_data(n_configs=100, include_critical_region=True, seed=42):
+    """
+    Generate test data for CPR analysis.
+    
+    Parameters:
+    - n_configs: Number of system configurations to generate
+    - include_critical_region: Whether to ensure coverage of the critical region
+    - seed: Random seed for reproducibility
+    
+    Returns:
+    - DataFrame with system configurations and their properties
+    """
+    np.random.seed(seed)
+    
+    # Lists to store generated data
+    bases = []
+    sizes = []
+    cprs = []
+    log_cprs = []
+    explorations = []
+    architectures = []
+    
+    # Define architecture types
+    constraint_types = ['pattern_prohibition', 'local_entropy', 'sum_modulation']
+    mixing_types = ['additive', 'multiplicative', 'triple_sum']
+    governor_types = ['uniform_distribution', 'entropy_maximization', 'novelty_seeking']
+    
+    # Parameters from source documents
+    L, k, x0 = 0.8513, 46.7978, -8.2999
+    
+    # Generate random configurations
+    for i in range(n_configs):
+        # Randomly select base and size
+        base = np.random.randint(3, 15)  # Bases from 3 to 14
+        
+        # Size depends on base to achieve desired CPR range
+        if i < n_configs * 0.3:  # 30% in constrained regime
+            size = np.random.randint(3, 8)  # Smaller sizes for higher CPR
+        elif i < n_configs * 0.7:  # 40% in emergent regime
+            size = np.random.randint(10, 20)  # Larger sizes for lower CPR
+        else:  # 30% randomly distributed
+            size = np.random.randint(3, 20)
+        
+        # Calculate CPR
+        cpr = size / (base ** size)
+        log_cpr = np.log10(cpr)
+        
+        # Predicted exploration based on sigmoid model
+        pred_exploration = sigmoid(log_cpr, L, k, x0)
+        
+        # Add noise to exploration for realism
+        noise = np.random.normal(0, 0.1)
+        exploration = np.clip(pred_exploration + noise, 0, 1)
+        
+        # Randomly select architecture
+        architecture = (
+            np.random.choice(constraint_types) + ", " +
+            np.random.choice(mixing_types) + ", " +
+            np.random.choice(governor_types)
+        )
+        
+        # Store the data
+        bases.append(base)
+        sizes.append(size)
+        cprs.append(cpr)
+        log_cprs.append(log_cpr)
+        explorations.append(exploration)
+        architectures.append(architecture)
+    
+    # If requested, ensure coverage of the critical region
+    if include_critical_region:
+        critical_base = 10
+        # Target CPR values around the critical point (x0 = -8.3)
+        target_log_cprs = np.linspace(-9, -7, 15)
+        
+        for target_log_cpr in target_log_cprs:
+            # Calculate size needed to achieve target CPR with base=10
+            target_cpr = 10 ** target_log_cpr
+            # For CPR = n/(b^n), solve for n
+            # This is an approximation as we can't solve exactly for integer n
+            size_approx = int(target_cpr * (critical_base ** 20))
+            size = max(3, min(30, size_approx))  # Keep size in reasonable range
+            
+            cpr = size / (critical_base ** size)
+            log_cpr = np.log10(cpr)
+            
+            # Predicted exploration
+            pred_exploration = sigmoid(log_cpr, L, k, x0)
+            noise = np.random.normal(0, 0.05)  # Less noise for critical region
+            exploration = np.clip(pred_exploration + noise, 0, 1)
+            
+            # Randomly select architecture
+            architecture = (
+                np.random.choice(constraint_types) + ", " +
+                np.random.choice(mixing_types) + ", " +
+                np.random.choice(governor_types)
+            )
+            
+            # Add to lists
+            bases.append(critical_base)
+            sizes.append(size)
+            cprs.append(cpr)
+            log_cprs.append(log_cpr)
+            explorations.append(exploration)
+            architectures.append(architecture)
+    
+    # Create DataFrame
+    data = pd.DataFrame({
+        'base': bases,
+        'size': sizes,
+        'CPR': cprs,
+        'log10_CPR': log_cprs,
+        'Exploration': explorations,
+        'Architecture': architectures
+    })
+    
+    return data
+
+def analyze_cpr_sampling(data, critical_region=(-9, -6), plot=True):
+    """
+    Analyze the sampling distribution of CPR values.
+    
+    Parameters:
+    - data: DataFrame with 'CPR' and 'Exploration' columns
+    - critical_region: Tuple defining the critical region in log10(CPR)
+    - plot: Whether to generate plots
+    
+    Returns:
+    - Dictionary with analysis results
+    """
+    # Extract log10(CPR) values
+    log_CPR = data['log10_CPR'] if 'log10_CPR' in data.columns else np.log10(data['CPR'])
+    
+    # Basic statistics
+    min_cpr = np.min(log_CPR)
+    max_cpr = np.max(log_CPR)
+    range_cpr = max_cpr - min_cpr
+    median_cpr = np.median(log_CPR)
+    
+    print(f"CPR Range: {min_cpr:.2f} to {max_cpr:.2f} (span: {range_cpr:.2f} log units)")
+    print(f"Median CPR: {median_cpr:.2f}")
+    
+    # Check for gaps in sampling
+    log_CPR_sorted = np.sort(log_CPR)
+    gaps = np.diff(log_CPR_sorted)
+    max_gap = np.max(gaps)
+    max_gap_index = np.argmax(gaps)
+    max_gap_location = log_CPR_sorted[max_gap_index]
+    
+    print(f"\nLargest gap in CPR sampling: {max_gap:.2f} log units")
+    print(f"Gap location: log₁₀(CPR) ≈ {max_gap_location:.2f}")
+    
+    # Critical region gaps
+    critical_mask = (log_CPR >= critical_region[0]) & (log_CPR <= critical_region[1])
+    critical_count = np.sum(critical_mask)
+    critical_percentage = 100 * critical_count / len(log_CPR)
+    
+    print(f"\nCritical region ({critical_region[0]} to {critical_region[1]}):")
+    print(f"  Contains {critical_count} configurations ({critical_percentage:.1f}% of total)")
+    
+    # Check for gaps in critical region
+    if critical_count > 1:
+        critical_cprs = np.sort(log_CPR[critical_mask])
+        critical_gaps = np.diff(critical_cprs)
+        max_critical_gap = np.max(critical_gaps) if len(critical_gaps) > 0 else 0
+        
+        if len(critical_gaps) > 0:
+            max_critical_gap_index = np.argmax(critical_gaps)
+            max_critical_gap_location = critical_cprs[max_critical_gap_index]
+            print(f"  Largest gap in critical region: {max_critical_gap:.2f} log units")
+            print(f"  Critical gap location: log₁₀(CPR) ≈ {max_critical_gap_location:.2f}")
+    else:
+        max_critical_gap = float('inf')  # No coverage in critical region
+        max_critical_gap_location = None
+        print("  No configurations in critical region!")
+    
+    # Warnings
+    warnings = []
+    
+    if max_gap > 1.0:
+        warnings.append(f"⚠️ Warning: Large gap in CPR coverage! ({max_gap:.2f} log units)")
+        warnings.append(f" Consider adding configurations near log₁₀(CPR) = {max_gap_location:.2f}")
+    
+    if max_critical_gap > 0.5:
+        warnings.append(f"⚠️ Warning: Significant gap in critical region! ({max_critical_gap:.2f} log units)")
+        if max_critical_gap_location:
+            warnings.append(f" Consider adding configurations near log₁₀(CPR) = {max_critical_gap_location:.2f}")
+    
+    if critical_percentage < 30:
+        warnings.append(f"⚠️ Warning: Low sampling density in critical region! ({critical_percentage:.1f}%)")
+        warnings.append(f" Consider adding more configurations in the log₁₀(CPR) range {critical_region[0]} to {critical_region[1]}")
+    
+    for warning in warnings:
+        print(warning)
+    
+    # Plot distribution of CPR values
+    if plot:
+        plt.figure(figsize=(12, 5))
+        
+        # Plot 1: Histogram of log₁₀(CPR) values
+        plt.subplot(1, 2, 1)
+        hist_bins = np.linspace(min_cpr, max_cpr, 20)
+        plt.hist(log_CPR, bins=hist_bins, edgecolor='black', alpha=0.7)
+        
+        # Highlight critical region
+        plt.axvspan(critical_region[0], critical_region[1], alpha=0.2, color='red',
+                   label=f'Critical region\n({critical_region[0]} to {critical_region[1]})')
+        
+        # Mark largest gap
+        plt.axvline(x=max_gap_location, color='red', linestyle='--')
+        plt.text(max_gap_location, plt.ylim()[1]*0.9, f'Gap: {max_gap:.2f}', 
+                rotation=90, verticalalignment='top')
+        
+        plt.xlabel('log₁₀(CPR)', fontsize=12)
+        plt.ylabel('Number of configurations', fontsize=12)
+        plt.title('Distribution of Tested CPR Values', fontsize=14)
+        plt.legend()
+        plt.grid(alpha=0.3)
+        
+        # Plot 2: Scatter plot of CPR vs Exploration
+        plt.subplot(1, 2, 2)
+        
+        # Plot theoretical sigmoid curve
+        x_smooth = np.linspace(min_cpr, max_cpr, 1000)
+        L, k, x0 = 0.8513, 46.7978, -8.2999  # Parameters from source
+        y_smooth = sigmoid(x_smooth, L, k, x0)
+        plt.plot(x_smooth, y_smooth, 'r-', linewidth=2, label='Theoretical sigmoid')
+        
+        # Highlight critical region
+        plt.axvspan(critical_region[0], critical_region[1], alpha=0.2, color='red')
+        
+        # Plot the data points
+        scatter = plt.scatter(log_CPR, data['Exploration'], alpha=0.7, c=log_CPR, cmap='viridis')
+        
+        plt.xlabel('log₁₀(CPR)', fontsize=12)
+        plt.ylabel('Exploration', fontsize=12)
+        plt.title('Coverage of CPR-Exploration Space', fontsize=14)
+        plt.colorbar(scatter, label='log₁₀(CPR)')
+        plt.grid(alpha=0.3)
+        
+        plt.tight_layout()
+        plt.savefig('cpr_sampling_analysis.png', dpi=300)
+        plt.show()
+        
+        # Additional plot: Focused view of critical region
+        plt.figure(figsize=(10, 6))
+        
+        # Filter data for critical region
+        critical_mask = (log_CPR >= critical_region[0]) & (log_CPR <= critical_region[1])
+        
+        if np.sum(critical_mask) > 0:
+            # Plot sigmoid curve in critical region
+            x_critical = np.linspace(critical_region[0], critical_region[1], 1000)
+            y_critical = sigmoid(x_critical, L, k, x0)
+            plt.plot(x_critical, y_critical, 'r-', linewidth=2, label='Theoretical sigmoid')
+            
+            # Plot data points in critical region
+            plt.scatter(log_CPR[critical_mask], data['Exploration'][critical_mask], 
+                       alpha=0.7, s=80, edgecolor='black')
+            
+            # Add labels for data points
+            for i, point in enumerate(np.where(critical_mask)[0]):
+                plt.text(log_CPR[point], data['Exploration'][point] + 0.02, 
+                        f"({data['base'][point]}, {data['size'][point]})", 
+                        fontsize=8, ha='center')
+            
+            plt.xlabel('log₁₀(CPR)', fontsize=12)
+            plt.ylabel('Exploration', fontsize=12)
+            plt.title('Critical Region Detail View', fontsize=14)
+            plt.grid(alpha=0.3)
+            plt.tight_layout()
+            plt.savefig('critical_region_detail.png', dpi=300)
+            plt.show()
+    
+    # Return analysis results
+    return {
+        'CPR_range': (min_cpr, max_cpr, range_cpr),
+        'max_gap': max_gap,
+        'max_gap_location': max_gap_location,
+        'critical_region_coverage': {
+            'count': critical_count,
+            'percentage': critical_percentage,
+            'max_gap': max_critical_gap,
+            'max_gap_location': max_critical_gap_location
+        },
+        'warnings': warnings
+    }
+
+def recommend_configurations(data, critical_region=(-9, -6), n_recommendations=5):
+    """
+    Recommend additional configurations to improve CPR sampling.
+    
+    Parameters:
+    - data: DataFrame with 'CPR' and other columns
+    - critical_region: Tuple defining the critical region in log10(CPR)
+    - n_recommendations: Number of configurations to recommend
+    
+    Returns:
+    - DataFrame with recommended configurations
+    """
+    # Extract log10(CPR) values
+    log_CPR = data['log10_CPR'] if 'log10_CPR' in data.columns else np.log10(data['CPR'])
+    
+    # Sort the values
+    log_CPR_sorted = np.sort(log_CPR)
+    
+    # Calculate gaps
+    gaps = np.diff(log_CPR_sorted)
+    gap_locations = (log_CPR_sorted[:-1] + log_CPR_sorted[1:]) / 2  # Midpoint of each gap
+    
+    # Create DataFrame of gaps
+    gap_df = pd.DataFrame({
+        'start_cpr': log_CPR_sorted[:-1],
+        'end_cpr': log_CPR_sorted[1:],
+        'gap': gaps,
+        'mid_point': gap_locations
+    })
+    
+    # Sort by gap size (descending)
+    gap_df = gap_df.sort_values('gap', ascending=False).reset_index(drop=True)
+    
+    # Filter for critical region gaps
+    critical_gaps = gap_df[
+        (gap_df['start_cpr'] >= critical_region[0]) & 
+        (gap_df['end_cpr'] <= critical_region[1])
+    ]
+    
+    # Prioritize gaps in critical region
+    recommendations = []
+    
+    # First, add recommendations for critical region
+    for i, row in critical_gaps.head(min(len(critical_gaps), n_recommendations)).iterrows():
+        target_log_cpr = row['mid_point']
+        target_cpr = 10 ** target_log_cpr
+        
+        # Find a base,size combination that gets close to this CPR
+        best_diff = float('inf')
+        best_config = None
+        
+        for base in range(3, 15):
+            for size in range(3, 30):
+                cpr = size / (base ** size)
+                log_cpr = np.log10(cpr)
+                diff = abs(log_cpr - target_log_cpr)
+                
+                if diff < best_diff:
+                    best_diff = diff
+                    best_config = (base, size, cpr, log_cpr)
+        
+        if best_config:
+            recommendations.append({
+                'target_log_cpr': target_log_cpr,
+                'base': best_config[0],
+                'size': best_config[1],
+                'actual_cpr': best_config[2],
+                'actual_log_cpr': best_config[3],
+                'gap_size': row['gap'],
+                'in_critical_region': True
+            })
+    
+    # Add recommendations for non-critical region if needed
+    if len(recommendations) < n_recommendations:
+        non_critical_gaps = gap_df[~gap_df.index.isin(critical_gaps.index)]
+        for i, row in non_critical_gaps.head(n_recommendations - len(recommendations)).iterrows():
+            target_log_cpr = row['mid_point']
+            target_cpr = 10 ** target_log_cpr
+            
+            # Find a base,size combination that gets close to this CPR
+            best_diff = float('inf')
+            best_config = None
+            
+            for base in range(3, 15):
+                for size in range(3, 30):
+                    cpr = size / (base ** size)
+                    log_cpr = np.log10(cpr)
+                    diff = abs(log_cpr - target_log_cpr)
+                    
+                    if diff < best_diff:
+                        best_diff = diff
+                        best_config = (base, size, cpr, log_cpr)
+            
+            if best_config:
+                recommendations.append({
+                    'target_log_cpr': target_log_cpr,
+                    'base': best_config[0],
+                    'size': best_config[1],
+                    'actual_cpr': best_config[2],
+                    'actual_log_cpr': best_config[3],
+                    'gap_size': row['gap'],
+                    'in_critical_region': False
+                })
+    
+    # Convert to DataFrame
+    recommendations_df = pd.DataFrame(recommendations)
+    
+    # Print recommendations
+    if len(recommendations_df) > 0:
+        print("\nRecommended configurations to improve CPR sampling:")
+        print(recommendations_df[['base', 'size', 'actual_log_cpr', 'gap_size', 'in_critical_region']])
+    
+    return recommendations_df
+
+if __name__ == "__main__":
+    # Generate test data
+    print("Generating test data...")
+    data = generate_test_data(n_configs=100, include_critical_region=True)
+    
+    # Analyze CPR sampling
+    print("\nAnalyzing CPR sampling distribution...\n")
+    analysis_results = analyze_cpr_sampling(data, critical_region=(-9, -6))
+    
+    # Get recommendations for improving sampling
+    recommendations = recommend_configurations(data, critical_region=(-9, -6), n_recommendations=5)
+
+Falsification criterion:
+If you have gaps > 1 log unit in the critical region (-9 to -6), your fit might be interpolating poorly.
+
+---
+
+# Test 3.2: Are You Missing Critical Configurations?
+
+The concern:
+"Maybe the sigmoid is an artifact of missing the transition region."
+
+How to test:
+
+A. Identify transition region
+
+From your fit, the transition occurs at:
+```
+log₁₀(CPR) = x₀ ± 2/k ≈ -8.3 ± 0.04
+```
+
+Check density of points in this region:
+
+```python
+transition_center = -8.3
+transition_width = 2 / 46.8 # ≈ 0.04
+
+transition_min = transition_center - 5 * transition_width
+transition_max = transition_center + 5 * transition_width
+
+# Count points in transition region
+in_transition = ((log_CPR > transition_min) & (log_CPR < transition_max))
+n_transition = np.sum(in_transition)
+total_points = len(log_CPR)
+
+print(f"Transition region: [{transition_min:.2f}, {transition_max:.2f}]")
+print(f"Points in transition: {n_transition} / {total_points} ({100*n_transition/total_points:.1f}%)")
+
+if n_transition < 5:
+    print("⚠️ Warning: Very few points in transition region!")
+    print(" The sigmoid shape might be poorly constrained.")
+```
+
+B. Test prediction in gaps
+
+If you have gaps, run new simulations at those CPR values:
+
+```python
+# Find largest gap
+gap_idx = np.argmax(gaps)
+gap_center = (log_CPR_sorted[gap_idx] + log_CPR_sorted[gap_idx+1]) / 2
+
+# Predict exploration at gap center
+E_predicted = sigmoid(gap_center, 0.8513, 46.7978, -8.2999)
+
+print(f"Predicted exploration at log₁₀(CPR)={gap_center:.2f}: {E_predicted:.4f}")
+print(f"Run a configuration with this CPR and verify prediction")
+
+# Find (base, size) that gives this CPR
+target_CPR = 10  gap_center
+# Solve: size / base^size = target_CPR
+# Try different combinations
+for base in range(3, 15):
+    for size in range(3, 30):
+        CPR_test = size / (base  size)
+        if abs(np.log10(CPR_test) - gap_center) < 0.05:
+            print(f" Try: base={base}, size={size}, CPR={CPR_test:.2e}")
+```
+
+Then actually run those configs and see if exploration matches prediction!
+
+---
+
+ Attack Vector 4: Alternative Explanations
+
+# Test 4.1: Is It Just a Power Law?
+
+The concern:
+"Maybe it's not a sigmoid, just a power law that looks sigmoid over limited range."
+
+How to test:
+
+```python
+# Fit power law
+def power_law_both_sides(x, a, b, x_c):
+    """Power law that can bend"""
+    return a * np.abs(x - x_c)  b
+
+popt_power, _ = curve_fit(power_law_both_sides, log_CPR, data['Exploration'], 
+                          p0=[1, 2, -8])
+
+# Compare fits
+x_fine = np.linspace(log_CPR.min(), log_CPR.max(), 1000)
+y_sigmoid = sigmoid(x_fine, 0.8513, 46.7978, -8.2999)
+y_power = power_law_both_sides(x_fine, *popt_power)
+
+plt.figure(figsize=(12, 5))
+
+plt.subplot(1, 2, 1)
+plt.scatter(log_CPR, data['Exploration'], alpha=0.5, label='Data')
+plt.plot(x_fine, y_sigmoid, 'r-', label='Sigmoid', linewidth=2)
+plt.plot(x_fine, y_power, 'b--', label='Power law', linewidth=2)
+plt.xlabel('log₁₀(CPR)')
+plt.ylabel('Exploration')
+plt.legend()
+plt.title('Model Comparison')
+
+plt.subplot(1, 2, 2)
+residual_sigmoid = data['Exploration'] - sigmoid(log_CPR, 0.8513, 46.7978, -8.2999)
+residual_power = data['Exploration'] - power_law_both_sides(log_CPR, *popt_power)
+
+plt.scatter(log_CPR, residual_sigmoid, alpha=0.5, label='Sigmoid residuals')
+plt.scatter(log_CPR, residual_power, alpha=0.5, label='Power law residuals')
+plt.axhline(0, color='black', linestyle='--')
+plt.xlabel('log₁₀(CPR)')
+plt.ylabel('Residual')
+plt.legend()
+plt.title('Residual Comparison')
+
+# Statistical test
+rss_sigmoid = np.sum(residual_sigmoid2)
+rss_power = np.sum(residual_power2)
+print(f"RSS Sigmoid: {rss_sigmoid:.6f}")
+print(f"RSS Power law: {rss_power:.6f}")
+```
+
+Falsification criterion:
+If power law fits better (lower RSS with same number of parameters), sigmoid might not be the right model.
+
+---
+
+# Test 4.2: Is It Base-Size Interaction, Not CPR?
+
+The concern:
+"Maybe exploration depends on BOTH base and size separately, not just their ratio CPR."
+
+How to test:
+
+A. Test multiple regression
+
+```python
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+
+# Create features
+X = data[['base', 'size']].values
+X_CPR = np.log10(data['CPR'].values).reshape(-1, 1)
+y = data['Exploration'].values
+
+# Model 1: CPR only
+model_CPR = LinearRegression()
+model_CPR.fit(X_CPR, y)
+y_pred_CPR = model_CPR.predict(X_CPR)
+r2_CPR = r2_score(y, y_pred_CPR)
+
+# Model 2: Base and Size separately
+model_separate = LinearRegression()
+model_separate.fit(X, y)
+y_pred_sep = model_separate.predict(X)
+r2_sep = r2_score(y, y_pred_sep)
+
+# Model 3: Base, Size, and interaction
+poly = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = poly.fit_transform(X)
+model_interact = LinearRegression()
+model_interact.fit(X_poly, y)
+y_pred_int = model_interact.predict(X_poly)
+r2_int = r2_score(y, y_pred_int)
+
+print("Linear Model Comparison:")
+print(f" CPR only: R² = {r2_CPR:.4f}")
+print(f" Base + Size: R² = {r2_sep:.4f}")
+print(f" Base×Size interact: R² = {r2_int:.4f}")
+
+# If CPR alone is best, it's the right variable
+```
+
+B. Partial correlation analysis
+
+```python
+from scipy.stats import pearsonr
+
+# Correlation of Exploration with each variable
+corr_base, _ = pearsonr(data['base'], data['Exploration'])
+corr_size, _ = pearsonr(data['size'], data['Exploration'])
+corr_CPR, _ = pearsonr(np.log10(data['CPR']), data['Exploration'])
+
+print("Correlations with Exploration:")
+print(f" Base: r = {corr_base:.3f}")
+print(f" Size: r = {corr_size:.3f}")
+print(f" log₁₀(CPR): r = {corr_CPR:.3f}")
+
+# CPR should have strongest correlation
+```
+
+Falsification criterion:
+If base×size interaction model is significantly better than CPR (ΔR² > 0.1), then CPR alone doesn't capture the full story.
+
+---
+
+ Attack Vector 5: Generalization Failures
+
+# Test 5.1: Does It Work Outside Your Tested Range?
+
+The concern:
+"Maybe the sigmoid only works in the range I tested."
+
+How to test:
+
+A. Extreme extrapolation
+
+Run simulations at CPR values you haven't tested:
+
+```python
+# Very high CPR (heavily constrained)
+# Example: Base-2, Size-3
+base, size = 2, 3
+CPR = size / (base  size) # = 3/8 = 0.375 (VERY high!)
+log_CPR = np.log10(CPR) # ≈ -0.43
+
+E_predicted = sigmoid(log_CPR, 0.8513, 46.7978, -8.2999)
+print(f"Base {base}, Size {size}:")
+print(f" CPR = {CPR:.4f} (log₁₀ = {log_CPR:.2f})")
+print(f" Predicted E = {E_predicted:.4f}")
+
+# Run actual simulation
+E_actual = run_and_measure_exploration(base, size)
+print(f" Actual E = {E_actual:.4f}")
+print(f" Error = {abs(E_actual - E_predicted):.4f}")
+
+# Should sigmoid predict this extreme case correctly?
+```
+
+B. Very low CPR (highly emergent)
+
+```python
+# Example: Base-13, Size-15
+base, size = 13, 15
+CPR = size / (base  size)
+log_CPR = np.log10(CPR)
+
+E_predicted = sigmoid(log_CPR, 0.8513, 46.7978, -8.2999)
+E_actual = run_and_measure_exploration(base, size)
+
+print(f"Base {base}, Size {size}:")
+print(f" CPR = {CPR:.2e} (log₁₀ = {log_CPR:.2f})")
+print(f" Predicted E = {E_predicted:.4f}")
+print(f" Actual E = {E_actual:.4f}")
+print(f" Error = {abs(E_actual - E_predicted):.4f}")
+```
+
+Falsification criterion:
+If predictions fail badly outside tested range (error > 0.2), the model doesn't generalize.
+
+---
+
+# Test 5.2: Does It Work for Different System Variants?
+
+The concern:
+"Maybe it only works for your specific implementation."
+
+How to test:
+
+A. Change governor frequency
+
+You likely tested with governor_freq = 20. Try:
+
+```python
+frequencies = [5, 10, 20, 50, 100, 200]
+
+for freq in frequencies:
+    # Run same configuration with different governor frequency
+    base, size = 7, 10
+    E = run_with_governor_freq(base, size, freq)
+    
+    CPR = size / (base  size)
+    E_predicted = sigmoid(np.log10(CPR), 0.8513, 46.7978, -8.2999)
+    
+    print(f"Governor freq {freq:3d}: E = {E:.4f}, Predicted = {E_predicted:.4f}")
+```
+
+Expected: If universal, E should not depend on governor_freq (as long as it's reasonable)
+
+Falsification: If E varies significantly with governor_freq, your "universal" law includes hidden parameter dependencies.
+
+---
+
+B. Remove governor entirely
+
+```python
+# What happens without governor?
+base, size = 7, 10
+E_with_gov = run_with_governor(base, size)
+E_without_gov = run_without_governor(base, size)
+
+print(f"With governor: E = {E_with_gov:.4f}")
+print(f"Without governor: E = {E_without_gov:.4f}")
+
+# Should they be similar? Or is governor essential?
+```
+
+C. Change corrector rule
+
+Try different constraint types:
+- No corrector (what happens?)
+- Different corrector (eliminate triples instead of pairs)
+- Probabilistic corrector (apply with probability p)
+
+Does sigmoid still hold?
+
+---
+
+# Test 5.3: Independent Replication
+
+The ultimate test:
+
+Give your code to someone else (collaborator, friend, online forum) and ask them to:
+1. Run it on their machine
+2. Verify they get same CPR values
+3. Verify they get same exploration values
+4. Fit their own sigmoid
+
+If they get the same parameters independently, it's real.
+
+---
+
+ Attack Vector 6: Theoretical Consistency
+
+# Test 6.1: Does Your Theory Predict x₀?
+
+The concern:
+"Maybe x₀ = -8.3 is coincidence, not derivable from first principles."
+
+How to test:
+
+Try to derive CPR* from system properties:
+
+```python
+# Theoretical estimate of critical CPR
+
+# Constraint "interaction distance"
+# Your corrector affects adjacent pairs
+interaction_range = 2 # adjacent elements
+
+# For emergence, need:
+# (states per interaction range) >> (constraints)
+
+# States per interaction range: m^interaction_range
+# Constraints: n / interaction_range
+
+# Critical condition:
+# m^interaction_range ≈ c × (n / interaction_range)
+# where c is some constant
+
+# Rearranging:
+# n / m^n ≈ (interaction_range * m^interaction_range) / c
+
+# For m=7, interaction_range=2:
+# CPR* ≈ (2 * 7^2) / c = 98/c
+
+# If c ≈ 10^10:
+# CPR* ≈ 10^-8 ✓
+
+print("Theoretical CPR* estimate:")
+for m in [5, 7, 11]:
+    for c in [1e9, 1e10, 1e11]:
+        CPR_theory = (interaction_range * minteraction_range) / c
+        print(f" m={m:2d}, c={c:.0e}: CPR* ≈ {CPR_theory:.2e} (log={np.log10(CPR_theory):.2f})")
+```
+
+Can you find a value of c that works across bases? If yes, your theory predicts the critical point!
+
+---
+
+# Test 6.2: Dimensional Analysis
+
+Check if your units make sense:
+
+```
+CPR = (number of elements) / (number of states)
+    = [dimensionless] / [dimensionless]  
+    = [dimensionless] ✓
+
+log₁₀(CPR) = dimensionless ✓
+
+Exploration = (unique states) / (total steps)
+            = [states] / [steps]
+            = [dimensionless] ✓
+
+Sigmoid: E = L / (1 + exp(-k × x))
+  L: [dimensionless] ✓
+  k: [dimensionless] ✓
+  x: [dimensionless] ✓
+```
+
+Everything checks out dimensionally.
+
+---
+
+ Attack Vector 7: Publication-Level Scrutiny
+
+# Test 7.1: What Would Reviewers Ask?
+
+Anticipate tough reviewer questions:
+
+Q1: "How do you know 52 configurations is enough?"
+
+Your answer:
+```python
+# Jackknife test: Remove each configuration one at a time
+params_jackknife = []
+
+for i in range(len(data)):
+    # Remove one point
+    data_subset = data.drop(i)
+    x_sub = np.log10(data_subset['CPR'])
+    y_sub = data_subset['Exploration']
+    
+    # Refit
+    popt, _ = curve_fit(sigmoid, x_sub, y_sub, p0=[0.85, 47, -8.3])
+    params_jackknife.append(popt)
+
+params_jack = np.array(params_jackknife)
+
+print("Jackknife parameter stability:")
+print(f" L: {np.mean(params_jack[:,0]):.4f} ± {np.std(params_jack[:,0]):.4f}")
+print(f" k: {np.mean(params_jack[:,1]):.4f} ± {np.std(params_jack[:,1]):.4f}")
+print(f" x0: {np.mean(params_jack[:,2]):.4f} ± {np.std(params_jack[:,2]):.4f}")
+
+# If std is small, 52 is enough
+```
+
+---
+
+Q2: "Did you try other functional forms?"
+
+Your answer: (Already covered in Test 1.1)
+
+---
+
+Q3: "How do you know this isn't specific to your RNG architecture?"
+
+Your answer:
+```
+"We tested 11 different bases (3-13), which differ fundamentally 
+in their state space structure. The universality across bases 
+suggests the phenomenon is architectural-general, at least within 
+the class of systems with local constraints and global mixing."
+
+Then: "Testing other constraint types is future work."
+```
+
+---
+
+Q4: "Your error bars are suspiciously small. Are you underestimating uncertainty?"
+
+Your answer:
+Run multiple seeds per configuration:
+
+```python
+# For each config, run 10 different seeds
+configs_to_test = [(5, 16), (7, 10), (9, 6)]
+
+for base, size in configs_to_test:
+    explorations = []
+    for seed in range(10):
+        E = run_simulation_with_seed(base, size, seed)
+        explorations.append(E)
+    
+    mean_E = np.mean(explorations)
+    std_E = np.std(explorations)
+    
+    print(f"Base {base}, Size {size}:")
+    print(f" E = {mean_E:.4f} ± {std_E:.4f} (n=10 seeds)")
+```
+
+Report this in your paper as measurement uncertainty.
+
+---
+
+ The Ultimate Falsification Test
+
+# Test 8: Preregister Predictions
+
+The gold standard in science:
+
+1. Before running new experiments, write down predictions
+2. Post predictions publicly (ArXiv, blog, OSF)
+3. Run experiments
+4. Compare results to predictions
+
+Example:
+
+```markdown
+# Preregistered Predictions (Date: 2024-XX-XX)
+
+Based on universal sigmoid with x0=-8.2999, k=46.7978, L=0.8513:
+
+ Prediction 1: Base-15, Size-9
+CPR = 9 / 15^9 ≈ 2.35e-11
+log₁₀(CPR) = -10.63
+Predicted E = 0.8513 / (1 + exp(-46.8*(-10.63+8.30))) = 0.851
+
+ Prediction 2: Base-4, Size-12
+CPR = 12 / 4^12 ≈ 7.15e-07
+log₁₀(CPR) = -6.15
+Predicted E = 0.8513 / (1 + exp(-46.8*(-6.15+8.30))) = 0.999
+
+ Prediction 3: Base-11, Size-8
+CPR = 8 / 11^8 ≈ 3.77e-08
+log₁₀(CPR) = -7.42
+Predicted E = 0.8513 / (1 + exp(-46.8*(-7.42+8.30))) = 0.982
+
+I will run these simulations after posting this prediction.
+If errors exceed 0.1 for any prediction, the model fails.
+```
+
+Then run the simulations and report honestly.
+
+---
+
+ Summary: Your Falsification Checklist
+
+# Must Do (Critical Tests):
+
+- [ ] Statistical validity
+  - [ ] AIC/BIC comparison to alternative models
+  - [ ] Cross-validation (train/test split)
+  - [ ] Bootstrap confidence intervals
+  
+- [ ] Implementation verification
+  - [ ] Hand-verify CPR calculations (5 examples)
+  - [ ] Hand-verify exploration calculations (5 examples)
+  - [ ] Check simulation convergence
+  
+- [ ] Universality testing
+  - [ ] Fit each base separately, compare x₀ values
+  - [ ] Test data collapse
+  - [ ] ANOVA test for x₀ variation
+  
+- [ ] Extrapolation testing
+  - [ ] Test extreme CPR values (very high, very low)
+  - [ ] Test untested base values
+  - [ ] Test different governor frequencies
+
+# Should Do (Important Tests):
+
+- [ ] Sampling analysis
+  - [ ] Check CPR coverage uniformity
+  - [ ] Identify and test gaps in transition region
+  
+- [ ] Alternative explanations
+  - [ ] Test power law fit
+  - [ ] Test base×size interaction models
+  
+- [ ] Robustness checks
+  - [ ] Multiple seeds per configuration
+  - [ ] Jackknife parameter stability
+  - [ ] Remove governor, test if sigmoid persists
+
+# Nice to Have (Publishability Tests):
+
+- [ ] Independent replication
+  - [ ] Have someone else run your code
+  
+- [ ] Preregistered predictions
+  - [ ] Predict 5 new configurations publicly
+  - [ ] Run and verify
+  
+- [ ] Theoretical derivation
+  - [ ] Attempt to derive x₀ from first principles
+
+---
+
+ What Results Would Falsify Your Discovery?
+
+Your discovery is falsified if:
+
+1. Alternative model fits significantly better (ΔAIC > 10)
+2. x₀ varies systematically with base (ANOVA p < 0.05)
+3. Cross-validation fails (test R² << training R²)
+4. Data doesn't collapse when rescaled (R² < 0.90)
+5. Extrapolation fails badly (errors > 0.2 outside tested range)
+6. CPR calculation is wrong (hand verification shows errors)
+7. Governor frequency strongly affects results (E changes by >0.2)
+8. Independent replication fails (others get different parameters)
+9. Preregistered predictions fail (>20% error rate)
+
+If none of these happen after honest testing, you have a real discovery.
+
+---
+
+ Final Advice
+
+Be your own harshest critic.
+
+If you find a problem, that's good news, not bad:
+- Finding a bug now is better than reviewers finding it
+- Every test you pass strengthens your confidence
+- Honesty about limitations makes the real findings more credible
+
+Document everything:
+- Keep a falsification log
+- Note every test you ran
+- Report negative results honestly
+- This becomes "Supplementary Materials" in your paper
+
+Remember: Science advances by trying to prove ourselves wrong and failing. If you can't falsify your discovery after genuinely trying, it's probably real.
+
+Now go break your own work! 
+
