@@ -1,3 +1,6 @@
+% COMPILATION NOTE: This document requires TWO compilation passes to resolve
+% all cross-references (sections, equations, tables).
+% Recommended: run  pdflatex twice, or use  latexmk -pdf cpr_framework_paper.tex
 \documentclass[12pt,a4paper]{article}
 
 \usepackage{amsmath}
@@ -5,11 +8,11 @@
 \usepackage{amsthm}
 \usepackage{booktabs}
 \usepackage{graphicx}
-\usepackage{hyperref}
 \usepackage{geometry}
 \usepackage{array}
 \usepackage{xcolor}
 \usepackage{microtype}
+\usepackage{hyperref}  % must be loaded last
 
 \geometry{margin=1in}
 
@@ -47,9 +50,9 @@ where $n$ denotes system size and $b$ the number of states per component. A crit
 \section{Introduction}
 % ==============================================================
 
-Constrained dynamical systems appear throughout physics, biology, and computer science. A persistent challenge is predicting the \emph{exploration} of a system---the fraction of its nominal state space that is effectively visited under given constraints---without exhaustive simulation. Prior work on the CPR framework used a single sigmoid model parameterised by the Constraint Pressure Ratio; this achieved satisfactory accuracy for density-based constraints but failed catastrophically (RMSE $>0.40$, $R^{2}=0.21$) for the \texttt{pattern\_prohibition} constraint class. The present paper resolves this failure through the discovery of two distinct universality classes and the construction of a class-aware hybrid predictor.
+Constrained dynamical systems appear throughout physics, biology, and computer science. A persistent challenge is predicting the \emph{exploration} of a system---the fraction of its nominal state space that is effectively visited under given constraints---without exhaustive simulation. Prior work on the CPR framework used a single sigmoid model parameterized by the Constraint Pressure Ratio; this achieved satisfactory accuracy for density-based constraints but failed catastrophically (RMSE $>0.40$, $R^{2}=0.21$) for the \texttt{pattern\_prohibition} constraint class. The present paper resolves this failure through the discovery of two distinct universality classes and the construction of a class-aware hybrid predictor.
 
-The paper is organised as follows. Section~\ref{sec:cpr} defines the CPR and proves its basic properties. Section~\ref{sec:classes} characterises the two universality classes. Section~\ref{sec:models} develops the mathematical models for each class. Section~\ref{sec:hybrid} specifies the hybrid prediction algorithm. Section~\ref{sec:validation} presents empirical validation. Section~\ref{sec:theory} discusses theoretical implications. Appendix~\ref{app:proofs} collects proofs, and Appendix~\ref{app:tables} provides parameter tables.
+The paper is organized as follows. Section~\ref{sec:cpr} defines the CPR and proves its basic properties. Section~\ref{sec:classes} characterizes the two universality classes. Section~\ref{sec:models} develops the mathematical models for each class. Section~\ref{sec:hybrid} specifies the hybrid prediction algorithm. Section~\ref{sec:validation} presents empirical validation. Section~\ref{sec:theory} discusses theoretical implications. Appendix~\ref{app:proofs} collects proofs, and Appendix~\ref{app:tables} provides parameter tables.
 
 % ==============================================================
 \section{Constraint Pressure Ratio}\label{sec:cpr}
@@ -62,7 +65,7 @@ For a system of $n$ components each admitting $b \geq 2$ discrete states, the \e
 \end{equation}
 \end{definition}
 
-Equation~\eqref{eq:cpr} has a natural interpretation: $b^{n}$ is the size of the unconstrained state space, and $n$ is a normalisation that ensures the quantity remains finite and dimensionless. Lower CPR indicates that the system is more constrained relative to its nominal size.
+Equation~\eqref{eq:cpr} has a natural interpretation: $b^{n}$ is the size of the unconstrained state space, and $n$ is a normalization that ensures the quantity remains finite and dimensionless. Lower CPR indicates that the system is more constrained relative to its nominal size.
 
 \begin{remark}
 In logarithmic form, $\log_{10}\mathrm{CPR} = \log_{10} n - n\log_{10} b$. For typical parameter ranges of interest, $\log_{10}\mathrm{CPR} \in [-40, -4]$.
@@ -105,7 +108,7 @@ where $C_{\max} = 2.4467$ is the maximum attainable complexity. Table~\ref{tab:c
 
 \begin{table}[ht]
 \centering
-\caption{Constant $C/E$ ratio for pattern-prohibition constraints (multiplicative mixing, entropy-maximisation governor).}
+\caption{Constant $C/E$ ratio for pattern-prohibition constraints (multiplicative mixing, entropy-maximization governor).}
 \label{tab:ce_ratio}
 \begin{tabular}{cccc}
 \toprule
@@ -371,7 +374,7 @@ The fitted upper asymptote $L = 0.8513$ is not an artifact of the pattern-prohib
     \item In the deep emergent regime, mean exploration is $\bar{E} = 0.6390$.
     \item $52.1\%$ of emergent-regime experiments satisfy $E < 0.900$.
 \end{itemize}
-Hence $L < 1$ reflects genuine constraint inefficiencies averaged over architectures, not a modelling artefact.
+Hence $L < 1$ reflects genuine constraint inefficiencies averaged over architectures, not a modeling artifact.
 
 % ==============================================================
 \section{Conclusions}
@@ -404,11 +407,11 @@ Suppose $E = \sigma(x)$ where $x = \log_{10}\mathrm{CPR}$, and suppose $C/E = \r
 \end{proof}
 
 \begin{theorem}[Optimality of $\alpha = 0.90$]\label{thm:alpha}
-Among power-law models $E = (C/C_{\max})^{\alpha}\times 10^{\beta}$ fitted to the pattern-prohibition data, $\alpha = 0.90$ minimises RMSE. The linear model $\alpha = 1.0$ yields a small but non-negligible additional error $(\Delta R^{2} \approx 0.003)$.
+Among power-law models $E = (C/C_{\max})^{\alpha}\times 10^{\beta}$ fitted to the pattern-prohibition data, $\alpha = 0.90$ minimizes RMSE. The linear model $\alpha = 1.0$ yields a small but non-negligible additional error $(\Delta R^{2} \approx 0.003)$.
 \end{theorem}
 
 \begin{proof}
-(Empirical.) A grid search over $\alpha \in [0.5, 1.5]$ with step $0.05$ was performed, optimising $\beta$ by ordinary least squares at each $\alpha$. The minimum RMSE $= 0.0220$ is attained at $\alpha = 0.90$. The linear model ($\alpha=1.0$) gives RMSE $= 0.0250$. Deviations from $\alpha = 0.90$ by $\pm 0.2$ increase RMSE by more than $10\%$.
+(Empirical.) A grid search over $\alpha \in [0.5, 1.5]$ with step $0.05$ was performed, optimizing $\beta$ by ordinary least squares at each $\alpha$. The minimum RMSE $= 0.0220$ is attained at $\alpha = 0.90$. The linear model ($\alpha=1.0$) gives RMSE $= 0.0250$. Deviations from $\alpha = 0.90$ by $\pm 0.2$ increase RMSE by more than $10\%$.
 \end{proof}
 
 \begin{corollary}
