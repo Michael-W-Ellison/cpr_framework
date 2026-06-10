@@ -953,7 +953,7 @@ Result: 100% architecture coverage
                         <select id="governorType" aria-label="Governor Type">
                             <option value="uniform_distribution">Uniform Distribution</option>
                             <option value="entropy_maximization">Entropy Maximization</option>
-                            <option value="novelty_seeking">Novelty Seeking</option>
+                            <option value="novelty_seeking">Novelty Seeking (extrapolation — untested)</option>
                         </select>
                     </div>
 
@@ -1558,6 +1558,429 @@ Overall Performance (312 experiments):
             }
         };
 
+        // ============================================================================
+        // EMBEDDED EXPERIMENTAL DATA (312 EXPERIMENTS)
+        // Source: Systematic parameter sweep across 13 configs × 4 constraints × 3 mixings × 2 governors
+        // ============================================================================
+
+        const EXPERIMENT_DATA = [
+            {config: '6,7', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.9668, exploration: 0.432},
+            {config: '6,7', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0024, exploration: 0.005},
+            {config: '6,7', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.0111, exploration: 0.0097},
+            {config: '6,7', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0122, exploration: 0.0103},
+            {config: '6,7', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.183, exploration: 0.112},
+            {config: '6,7', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0629, exploration: 0.0333},
+            {config: '6,7', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.0077, exploration: 0.0073},
+            {config: '6,7', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0059, exploration: 0.0057},
+            {config: '6,7', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.0, exploration: 0.003},
+            {config: '6,7', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0, exploration: 0.0133},
+            {config: '6,7', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.0321, exploration: 0.022},
+            {config: '6,7', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.016, exploration: 0.0107},
+            {config: '6,7', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.5462, exploration: 0.2457},
+            {config: '6,7', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0022, exploration: 0.0023},
+            {config: '6,7', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.024, exploration: 0.0137},
+            {config: '6,7', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0184, exploration: 0.012},
+            {config: '6,7', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.0095, exploration: 0.0093},
+            {config: '6,7', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0022, exploration: 0.0023},
+            {config: '6,7', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.0055, exploration: 0.0057},
+            {config: '6,7', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0042, exploration: 0.0043},
+            {config: '6,7', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.0, exploration: 0.0033},
+            {config: '6,7', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0, exploration: 0.0037},
+            {config: '6,7', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 5.1e-05, complexity: 0.0022, exploration: 0.0023},
+            {config: '6,7', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 5.1e-05, complexity: 0.0042, exploration: 0.0043},
+            {config: '8,7', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 2.3458, exploration: 0.9613},
+            {config: '8,7', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.0955, exploration: 0.054},
+            {config: '8,7', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 0.0211, exploration: 0.0137},
+            {config: '8,7', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.0312, exploration: 0.019},
+            {config: '8,7', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 2.2568, exploration: 0.928},
+            {config: '8,7', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.0431, exploration: 0.0277},
+            {config: '8,7', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 0.0121, exploration: 0.011},
+            {config: '8,7', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.0139, exploration: 0.0127},
+            {config: '8,7', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 0.0, exploration: 0.0037},
+            {config: '8,7', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.0, exploration: 0.005},
+            {config: '8,7', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 1.1935, exploration: 0.511},
+            {config: '8,7', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.087, exploration: 0.0477},
+            {config: '8,7', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 2.4355, exploration: 0.9957},
+            {config: '8,7', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.0293, exploration: 0.017},
+            {config: '8,7', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 0.3554, exploration: 0.165},
+            {config: '8,7', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.0443, exploration: 0.0243},
+            {config: '8,7', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 1.444, exploration: 0.624},
+            {config: '8,7', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.0142, exploration: 0.0093},
+            {config: '8,7', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 2.4269, exploration: 0.9923},
+            {config: '8,7', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.0404, exploration: 0.0233},
+            {config: '8,7', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 0.0, exploration: 0.0047},
+            {config: '8,7', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.0, exploration: 0.0043},
+            {config: '8,7', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.39e-06, complexity: 2.0216, exploration: 0.837},
+            {config: '8,7', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.39e-06, complexity: 0.021, exploration: 0.0137},
+            {config: '6,11', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.7559, exploration: 0.3583},
+            {config: '6,11', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.0658, exploration: 0.0367},
+            {config: '6,11', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.1179, exploration: 0.0653},
+            {config: '6,11', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.0117, exploration: 0.008},
+            {config: '6,11', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.0103, exploration: 0.007},
+            {config: '6,11', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.0091, exploration: 0.0067},
+            {config: '6,11', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.0073, exploration: 0.008},
+            {config: '6,11', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.0072, exploration: 0.008},
+            {config: '6,11', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.0, exploration: 0.0087},
+            {config: '6,11', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.0, exploration: 0.013},
+            {config: '6,11', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.4023, exploration: 0.1863},
+            {config: '6,11', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.1182, exploration: 0.06},
+            {config: '6,11', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.0981, exploration: 0.054},
+            {config: '6,11', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.0361, exploration: 0.0203},
+            {config: '6,11', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.1651, exploration: 0.08},
+            {config: '6,11', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.2229, exploration: 0.1093},
+            {config: '6,11', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.0147, exploration: 0.0107},
+            {config: '6,11', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.0073, exploration: 0.0053},
+            {config: '6,11', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.5008, exploration: 0.2463},
+            {config: '6,11', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.0355, exploration: 0.02},
+            {config: '6,11', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.0, exploration: 0.005},
+            {config: '6,11', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.0, exploration: 0.005},
+            {config: '6,11', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.39e-06, complexity: 0.0469, exploration: 0.032},
+            {config: '6,11', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.39e-06, complexity: 0.0073, exploration: 0.0053},
+            {config: '8,11', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '8,11', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '8,11', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 0.7349, exploration: 0.3283},
+            {config: '8,11', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 0.2588, exploration: 0.1347},
+            {config: '8,11', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 0.4828, exploration: 0.2407},
+            {config: '8,11', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 0.2782, exploration: 0.1453},
+            {config: '8,11', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 0.0118, exploration: 0.0107},
+            {config: '8,11', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 0.0118, exploration: 0.0107},
+            {config: '8,11', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 0.0, exploration: 0.01},
+            {config: '8,11', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 0.0008, exploration: 0.0173},
+            {config: '8,11', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 2.3204, exploration: 0.9513},
+            {config: '8,11', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 0.2727, exploration: 0.132},
+            {config: '8,11', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 2.3253, exploration: 0.9537},
+            {config: '8,11', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 0.078, exploration: 0.0403},
+            {config: '8,11', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 0.4719, exploration: 0.2193},
+            {config: '8,11', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 0.0234, exploration: 0.014},
+            {config: '8,11', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 0.8466, exploration: 0.3923},
+            {config: '8,11', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 0.0051, exploration: 0.004},
+            {config: '8,11', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '8,11', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 1.5658, exploration: 0.6697},
+            {config: '8,11', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 0.0, exploration: 0.006},
+            {config: '8,11', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 0.0, exploration: 0.006},
+            {config: '8,11', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.73e-08, complexity: 1.0866, exploration: 0.4913},
+            {config: '8,11', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.73e-08, complexity: 0.0439, exploration: 0.0247},
+            {config: '10,7', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '10,7', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '10,7', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 0.0789, exploration: 0.0517},
+            {config: '10,7', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 0.0339, exploration: 0.023},
+            {config: '10,7', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '10,7', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 0.6997, exploration: 0.3173},
+            {config: '10,7', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 0.0064, exploration: 0.007},
+            {config: '10,7', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 0.006, exploration: 0.0067},
+            {config: '10,7', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 0.0, exploration: 0.005},
+            {config: '10,7', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 0.0, exploration: 0.0043},
+            {config: '10,7', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 2.3882, exploration: 0.9773},
+            {config: '10,7', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 0.1934, exploration: 0.1},
+            {config: '10,7', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '10,7', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 0.5729, exploration: 0.257},
+            {config: '10,7', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 0.2633, exploration: 0.1237},
+            {config: '10,7', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 0.1073, exploration: 0.0543},
+            {config: '10,7', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '10,7', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 0.0567, exploration: 0.0307},
+            {config: '10,7', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '10,7', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '10,7', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 0.0, exploration: 0.004},
+            {config: '10,7', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 0.0, exploration: 0.0053},
+            {config: '10,7', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.54e-08, complexity: 2.4467, exploration: 1.0},
+            {config: '10,7', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.54e-08, complexity: 0.1781, exploration: 0.086},
+            {config: '12,11', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 2.4467, exploration: 1.0},
+            {config: '12,11', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 2.4467, exploration: 1.0},
+            {config: '12,11', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 0.0438, exploration: 0.0263},
+            {config: '12,11', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 0.6793, exploration: 0.3163},
+            {config: '12,11', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 2.4467, exploration: 1.0},
+            {config: '12,11', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 2.4467, exploration: 1.0},
+            {config: '12,11', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 0.0219, exploration: 0.016},
+            {config: '12,11', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 0.0153, exploration: 0.0113},
+            {config: '12,11', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 0.0, exploration: 0.0073},
+            {config: '12,11', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 0.0, exploration: 0.0057},
+            {config: '12,11', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 2.4467, exploration: 1.0},
+            {config: '12,11', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 2.4467, exploration: 1.0},
+            {config: '12,11', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 1.542, exploration: 0.6607},
+            {config: '12,11', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 0.078, exploration: 0.0403},
+            {config: '12,11', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 0.4479, exploration: 0.2087},
+            {config: '12,11', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 0.217, exploration: 0.1027},
+            {config: '12,11', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 1.4682, exploration: 0.6247},
+            {config: '12,11', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 0.0361, exploration: 0.0203},
+            {config: '12,11', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 2.2738, exploration: 0.9343},
+            {config: '12,11', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 0.2053, exploration: 0.1033},
+            {config: '12,11', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 0.0, exploration: 0.006},
+            {config: '12,11', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 0.0, exploration: 0.0067},
+            {config: '12,11', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.82e-12, complexity: 1.4415, exploration: 0.6193},
+            {config: '12,11', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.82e-12, complexity: 0.0567, exploration: 0.0317},
+            {config: '10,13', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 0.7913, exploration: 0.3497},
+            {config: '10,13', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 0.1694, exploration: 0.0883},
+            {config: '10,13', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 1.414, exploration: 0.6013},
+            {config: '10,13', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 0.1047, exploration: 0.0587},
+            {config: '10,13', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 0.099, exploration: 0.0557},
+            {config: '10,13', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 0.0002, exploration: 0.0137},
+            {config: '10,13', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 0.0, exploration: 0.007},
+            {config: '10,13', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 0.3643, exploration: 0.169},
+            {config: '10,13', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 0.1668, exploration: 0.0807},
+            {config: '10,13', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 0.3031, exploration: 0.14},
+            {config: '10,13', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 0.0004, exploration: 0.0137},
+            {config: '10,13', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 0.0, exploration: 0.0073},
+            {config: '10,13', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 7.25e-11, complexity: 2.4467, exploration: 1.0},
+            {config: '10,13', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 7.25e-11, complexity: 0.3247, exploration: 0.1497},
+            {config: '12,13', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 2.4467, exploration: 1.0},
+            {config: '12,13', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 2.4467, exploration: 1.0},
+            {config: '12,13', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 0.2684, exploration: 0.145},
+            {config: '12,13', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 0.1381, exploration: 0.0797},
+            {config: '12,13', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 2.4467, exploration: 1.0},
+            {config: '12,13', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 2.4467, exploration: 1.0},
+            {config: '12,13', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 0.7636, exploration: 0.3403},
+            {config: '12,13', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 0.7364, exploration: 0.3333},
+            {config: '12,13', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 0.0017, exploration: 0.021},
+            {config: '12,13', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 0.0, exploration: 0.008},
+            {config: '12,13', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 2.4467, exploration: 1.0},
+            {config: '12,13', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 2.4467, exploration: 1.0},
+            {config: '12,13', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 0.624, exploration: 0.284},
+            {config: '12,13', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 0.0055, exploration: 0.0043},
+            {config: '12,13', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 0.634, exploration: 0.28},
+            {config: '12,13', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 0.2998, exploration: 0.141},
+            {config: '12,13', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 0.9597, exploration: 0.4157},
+            {config: '12,13', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 0.0055, exploration: 0.0043},
+            {config: '12,13', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 1.5578, exploration: 0.6633},
+            {config: '12,13', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 0.02, exploration: 0.0153},
+            {config: '12,13', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 0.0, exploration: 0.0057},
+            {config: '12,13', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 0.0269, exploration: 0.063},
+            {config: '12,13', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 5.15e-13, complexity: 1.2159, exploration: 0.53},
+            {config: '12,13', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 5.15e-13, complexity: 0.0081, exploration: 0.0063},
+            {config: '15,11', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 1.0623, exploration: 0.4633},
+            {config: '15,11', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 0.2611, exploration: 0.134},
+            {config: '15,11', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 1.9404, exploration: 0.8043},
+            {config: '15,11', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 1.685, exploration: 0.7083},
+            {config: '15,11', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 0.0, exploration: 0.0083},
+            {config: '15,11', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 0.0, exploration: 0.01},
+            {config: '15,11', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 0.111, exploration: 0.057},
+            {config: '15,11', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 0.3062, exploration: 0.1417},
+            {config: '15,11', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 0.137, exploration: 0.0673},
+            {config: '15,11', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 1.1556, exploration: 0.5113},
+            {config: '15,11', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 0.0, exploration: 0.0083},
+            {config: '15,11', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 0.0092, exploration: 0.038},
+            {config: '15,11', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '15,11', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 3.59e-15, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 0.7975, exploration: 0.366},
+            {config: '20,13', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 2.0963, exploration: 0.868},
+            {config: '20,13', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 0.0, exploration: 0.0103},
+            {config: '20,13', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 0.0, exploration: 0.0107},
+            {config: '20,13', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 2.3674, exploration: 0.969},
+            {config: '20,13', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 0.917, exploration: 0.3967},
+            {config: '20,13', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 0.0, exploration: 0.0103},
+            {config: '20,13', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 0.0, exploration: 0.0093},
+            {config: '20,13', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '20,13', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.05e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 1.5281, exploration: 0.642},
+            {config: '18,17', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 0.5126, exploration: 0.2487},
+            {config: '18,17', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 0.001, exploration: 0.017},
+            {config: '18,17', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 0.0003, exploration: 0.0113},
+            {config: '18,17', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 0.2023, exploration: 0.0963},
+            {config: '18,17', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 0.857, exploration: 0.374},
+            {config: '18,17', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 0.776, exploration: 0.3373},
+            {config: '18,17', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 0.0952, exploration: 0.0483},
+            {config: '18,17', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 0.3464, exploration: 0.162},
+            {config: '18,17', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 0.0015, exploration: 0.0177},
+            {config: '18,17', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 0.0001, exploration: 0.0093},
+            {config: '18,17', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 1.28e-21, complexity: 2.4467, exploration: 1.0},
+            {config: '18,17', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 1.28e-21, complexity: 0.2815, exploration: 0.138},
+            {config: '25,19', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 2.4388, exploration: 0.997},
+            {config: '25,19', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 0.0005, exploration: 0.0133},
+            {config: '25,19', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 0.0006, exploration: 0.0137},
+            {config: '25,19', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 2.1407, exploration: 0.8823},
+            {config: '25,19', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 0.0003, exploration: 0.0107},
+            {config: '25,19', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 0.0469, exploration: 0.0823},
+            {config: '25,19', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '25,19', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 2.69e-31, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'adjacent_duplicates', mixing: 'additive', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'adjacent_duplicates', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'adjacent_duplicates', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'sum_limits', mixing: 'additive', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'sum_limits', mixing: 'additive', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 0.0031, exploration: 0.0227},
+            {config: '30,23', constraint: 'sum_limits', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 0.0244, exploration: 0.0607},
+            {config: '30,23', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'sum_limits', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'pattern_prohibition', mixing: 'additive', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 2.4172, exploration: 0.9883},
+            {config: '30,23', constraint: 'pattern_prohibition', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 0.293, exploration: 0.1417},
+            {config: '30,23', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'pattern_prohibition', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'local_entropy', mixing: 'additive', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'local_entropy', mixing: 'additive', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 0.001, exploration: 0.0147},
+            {config: '30,23', constraint: 'local_entropy', mixing: 'multiplicative', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 0.0233, exploration: 0.0573},
+            {config: '30,23', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'uniform_distribution', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0},
+            {config: '30,23', constraint: 'local_entropy', mixing: 'triple_sum', governor: 'entropy_maximization', cpr: 4.22e-40, complexity: 2.4467, exploration: 1.0}
+        ];
+
+        // ============================================================================
+        // DATA ACCESS FUNCTIONS
+        // ============================================================================
+
+        function filterExperiments(filters = {}) {
+            return EXPERIMENT_DATA.filter(exp => {
+                if (filters.config && exp.config !== filters.config) return false;
+                if (filters.constraint && exp.constraint !== filters.constraint) return false;
+                if (filters.mixing && exp.mixing !== filters.mixing) return false;
+                if (filters.governor && exp.governor !== filters.governor) return false;
+                if (filters.constraintClass) {
+                    const expClass = getConstraintClass(exp.constraint);
+                    if (expClass !== filters.constraintClass) return false;
+                }
+                return true;
+            });
+        }
+
+        function findMatchingExperiment(config, constraint, mixing, governor) {
+            const rawConstraint = mapUIConstraintToRaw(constraint);
+            return EXPERIMENT_DATA.find(exp =>
+                exp.config === config &&
+                exp.constraint === rawConstraint &&
+                exp.mixing === mixing &&
+                exp.governor === governor
+            );
+        }
+
+        function findNearestExperiment(targetLogCPR, filters = {}) {
+            const filtered = filterExperiments(filters);
+            if (filtered.length === 0) return null;
+
+            return filtered.reduce((nearest, exp) => {
+                const expLogCPR = Math.log10(exp.cpr);
+                const nearestLogCPR = Math.log10(nearest.cpr);
+                return Math.abs(expLogCPR - targetLogCPR) < Math.abs(nearestLogCPR - targetLogCPR)
+                    ? exp : nearest;
+            });
+        }
+
+        function getConstraintClass(constraint) {
+            if (constraint === 'pattern_prohibition' || constraint === 'adjacent_duplicates') {
+                return 'structure';
+            }
+            return 'density';
+        }
+
+        function mapUIConstraintToRaw(uiConstraint) {
+            if (uiConstraint === 'sum_modulation') return 'sum_limits';
+            return uiConstraint;
+        }
+
+        function mapRawConstraintToUI(rawConstraint) {
+            if (rawConstraint === 'sum_limits') return 'sum_modulation';
+            if (rawConstraint === 'adjacent_duplicates') return 'pattern_prohibition';
+            return rawConstraint;
+        }
+
+        function getExperimentsByConstraintClass(constraintClass) {
+            return filterExperiments({ constraintClass });
+        }
+
+        function getAllConfigs() {
+            const configs = [...new Set(EXPERIMENT_DATA.map(e => e.config))];
+            return configs.sort((a, b) => {
+                const [n1] = a.split(',').map(Number);
+                const [n2] = b.split(',').map(Number);
+                return n1 - n2;
+            });
+        }
+
+        function parseConfig(configStr) {
+            const [n, b] = configStr.split(',').map(Number);
+            return { n, b };
+        }
+
+        function makeConfigStr(n, b) {
+            return `${n},${b}`;
+        }
+
+        function getExperimentStats() {
+            const stats = {
+                total: EXPERIMENT_DATA.length,
+                configs: getAllConfigs().length,
+                constraints: [...new Set(EXPERIMENT_DATA.map(e => e.constraint))].length,
+                mixings: [...new Set(EXPERIMENT_DATA.map(e => e.mixing))].length,
+                governors: [...new Set(EXPERIMENT_DATA.map(e => e.governor))].length,
+                cprRange: {
+                    min: Math.min(...EXPERIMENT_DATA.map(e => e.cpr)),
+                    max: Math.max(...EXPERIMENT_DATA.map(e => e.cpr))
+                },
+                complexityRange: {
+                    min: Math.min(...EXPERIMENT_DATA.map(e => e.complexity)),
+                    max: Math.max(...EXPERIMENT_DATA.map(e => e.complexity))
+                },
+                explorationRange: {
+                    min: Math.min(...EXPERIMENT_DATA.map(e => e.exploration)),
+                    max: Math.max(...EXPERIMENT_DATA.map(e => e.exploration))
+                }
+            };
+            return stats;
+        }
+
         let chart = null;
         let chartJsLoaded = false;
 
@@ -1737,17 +2160,50 @@ Overall Performance (312 experiments):
                 modelElement.className = 'model-indicator model-cpr';
             }
 
-            // Update architecture analysis
-            updateArchitectureAnalysis(constraint, mixing, governor, adjustmentFactor, regime, modelType, complexity, exploration);
+            // Update architecture analysis (now includes experimental data lookup)
+            updateArchitectureAnalysis(constraint, mixing, governor, adjustmentFactor, regime, modelType, complexity, exploration, n, b);
 
-            // Update chart
-            updateChart(adjustedCPR, exploration, modelType);
+            // Update chart with experimental data overlay
+            updateChart(adjustedCPR, exploration, modelType, n, b, constraint, mixing, governor);
         }
 
-        function updateArchitectureAnalysis(constraint, mixing, governor, factor, regime, modelType, complexity, exploration) {
+        function updateArchitectureAnalysis(constraint, mixing, governor, factor, regime, modelType, complexity, exploration, n, b) {
             let analysis = `<strong>Architecture:</strong> ${constraint} + ${mixing} + ${governor}<br>`;
             analysis += `<strong>Adjustment Factor:</strong> ${factor.toFixed(2)}x<br>`;
             analysis += `<strong>Model Used:</strong> ${modelType === 'complexity_based' ? 'Complexity-Based (Class II)' : 'CPR-Based Sigmoid (Class I)'}<br><br>`;
+
+            // Check for matching experimental data
+            const configStr = makeConfigStr(n, b);
+            const matchingExp = findMatchingExperiment(configStr, constraint, mixing, governor);
+
+            if (matchingExp) {
+                const predError = Math.abs(exploration - matchingExp.exploration);
+                const predErrorPct = (predError * 100).toFixed(1);
+                analysis += `<div style="background: #d4edda; padding: 10px; border-radius: 5px; margin-bottom: 10px;">`;
+                analysis += `<strong>📊 Experimental Data Available</strong><br>`;
+                analysis += `Measured Exploration: <strong>${(matchingExp.exploration * 100).toFixed(2)}%</strong><br>`;
+                analysis += `Measured Complexity: <strong>${matchingExp.complexity.toFixed(4)}</strong><br>`;
+                analysis += `Prediction Error: ${predErrorPct}%`;
+                analysis += `</div>`;
+            } else if (governor === 'novelty_seeking') {
+                analysis += `<div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-bottom: 10px;">`;
+                analysis += `<strong>⚠️ Extrapolation Warning</strong><br>`;
+                analysis += `The novelty_seeking governor was not experimentally tested. This prediction is an untested extrapolation based on theoretical assumptions.`;
+                analysis += `</div>`;
+            } else {
+                // No exact match - show nearest experiment info
+                const nearestExp = findNearestExperiment(Math.log10(calculateCPR(n, b)), {
+                    constraint: mapUIConstraintToRaw(constraint),
+                    mixing: mixing,
+                    governor: governor
+                });
+                if (nearestExp) {
+                    analysis += `<div style="background: #e2e3e5; padding: 10px; border-radius: 5px; margin-bottom: 10px;">`;
+                    analysis += `<strong>📈 Nearest Experiment</strong> (config ${nearestExp.config})<br>`;
+                    analysis += `Measured E: ${(nearestExp.exploration * 100).toFixed(2)}%, C: ${nearestExp.complexity.toFixed(4)}`;
+                    analysis += `</div>`;
+                }
+            }
 
             // Constraint class explanation
             if (constraint === 'pattern_prohibition') {
@@ -1816,7 +2272,28 @@ Overall Performance (312 experiments):
             return data;
         }
 
-        function updateChart(currentAdjustedCPR, currentExploration, modelType) {
+        function generateExperimentalDataPoints(constraintClass, xMin, xMax) {
+            const experiments = constraintClass === 'density'
+                ? filterExperiments({ constraintClass: 'density' })
+                : filterExperiments({ constraintClass: 'structure' });
+
+            return experiments
+                .filter(exp => {
+                    const logCPR = Math.log10(exp.cpr);
+                    return logCPR >= xMin && logCPR <= xMax;
+                })
+                .map(exp => ({
+                    x: Math.log10(exp.cpr),
+                    y: exp.exploration,
+                    complexity: exp.complexity,
+                    config: exp.config,
+                    constraint: exp.constraint,
+                    mixing: exp.mixing,
+                    governor: exp.governor
+                }));
+        }
+
+        function updateChart(currentAdjustedCPR, currentExploration, modelType, n, b, constraint, mixing, governor) {
             if (!chartJsLoaded) {
                 console.warn('Chart.js not loaded yet');
                 return;
@@ -1847,6 +2324,15 @@ Overall Performance (312 experiments):
             const xMin = Math.max(-50, Math.min(-15, currentLogCPR - 10));
             const xMax = Math.min(0, Math.max(-5, currentLogCPR + 5));
 
+            // Get experimental data points for overlay
+            const constraintClass = getConstraintClass(mapUIConstraintToRaw(constraint));
+            const experimentalPoints = generateExperimentalDataPoints(constraintClass, xMin, xMax);
+            console.log(`Overlaying ${experimentalPoints.length} experimental data points (${constraintClass}-based)`);
+
+            // Check for matching experimental data
+            const configStr = makeConfigStr(n, b);
+            const matchingExp = findMatchingExperiment(configStr, constraint, mixing, governor);
+
             const datasets = [{
                 label: 'Universal Sigmoid (Density-Based)',
                 data: chartData,
@@ -1859,10 +2345,38 @@ Overall Performance (312 experiments):
                 showLine: true
             }];
 
+            // Add experimental data overlay (shown as small semi-transparent dots)
+            if (experimentalPoints.length > 0) {
+                datasets.push({
+                    label: `Experimental Data (${experimentalPoints.length} points)`,
+                    data: experimentalPoints,
+                    backgroundColor: 'rgba(75, 192, 192, 0.4)',
+                    borderColor: 'rgba(75, 192, 192, 0.8)',
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    showLine: false
+                });
+            }
+
+            // Add measured value point if matching experiment exists
+            if (matchingExp) {
+                const measuredLogCPR = Math.log10(matchingExp.cpr);
+                datasets.push({
+                    label: `Measured (${matchingExp.config})`,
+                    data: [{ x: measuredLogCPR, y: matchingExp.exploration }],
+                    backgroundColor: '#10b981',
+                    borderColor: '#047857',
+                    pointRadius: 12,
+                    pointHoverRadius: 14,
+                    showLine: false,
+                    pointStyle: 'rectRot'
+                });
+            }
+
             // Add current point with different color based on model type
             if (modelType === 'complexity_based') {
                 datasets.push({
-                    label: 'Current Config (Complexity Model)',
+                    label: 'Predicted (Complexity Model)',
                     data: [{ x: currentLogCPR, y: currentExploration }],
                     backgroundColor: '#3b82f6',
                     borderColor: '#1e40af',
@@ -1873,7 +2387,7 @@ Overall Performance (312 experiments):
                 });
             } else {
                 datasets.push({
-                    label: 'Current Config (CPR Model)',
+                    label: 'Predicted (CPR Model)',
                     data: [{ x: currentLogCPR, y: currentExploration }],
                     backgroundColor: '#e53e3e',
                     borderColor: '#c53030',
@@ -1985,10 +2499,21 @@ Overall Performance (312 experiments):
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        if (context.datasetIndex === 0) {
+                                        const datasetLabel = context.dataset.label || '';
+                                        if (datasetLabel.includes('Sigmoid')) {
                                             return `Sigmoid Model: ${(context.parsed.y * 100).toFixed(2)}%`;
+                                        } else if (datasetLabel.includes('Experimental')) {
+                                            const point = context.raw;
+                                            return [
+                                                `Config: (${point.config})`,
+                                                `Exploration: ${(point.y * 100).toFixed(2)}%`,
+                                                `Complexity: ${point.complexity.toFixed(4)}`,
+                                                `Constraint: ${point.constraint}`
+                                            ];
+                                        } else if (datasetLabel.includes('Measured')) {
+                                            return `Measured: ${(context.parsed.y * 100).toFixed(2)}% @ log₁₀(CPR) = ${context.parsed.x.toFixed(2)}`;
                                         } else {
-                                            return `Current: ${(context.parsed.y * 100).toFixed(2)}% @ log₁₀(CPR) = ${context.parsed.x.toFixed(2)}`;
+                                            return `Predicted: ${(context.parsed.y * 100).toFixed(2)}% @ log₁₀(CPR) = ${context.parsed.x.toFixed(2)}`;
                                         }
                                     }
                                 }
@@ -2067,6 +2592,14 @@ Overall Performance (312 experiments):
             }
 
             chartJsLoaded = true;
+
+            // Log dataset stats for verification
+            const stats = getExperimentStats();
+            console.log('📊 Experimental Dataset Loaded:');
+            console.log(`   Total experiments: ${stats.total}`);
+            console.log(`   Configs: ${stats.configs}, Constraints: ${stats.constraints}, Mixings: ${stats.mixings}, Governors: ${stats.governors}`);
+            console.log(`   CPR range: ${stats.cprRange.min.toExponential(2)} to ${stats.cprRange.max.toExponential(2)}`);
+            console.log(`   Exploration range: ${stats.explorationRange.min} to ${stats.explorationRange.max}`);
 
             // Initialize tabs
             initTabs();
