@@ -697,6 +697,51 @@ Interpretation:
                     <p>The sigmoid model uses <strong>Adjusted CPR</strong> to make predictions, accounting for how architecture reduces the valid state space.</p>
                 </div>
 
+                <h3>2b. How the System Works and What Is Measured</h3>
+
+                <p>Every data point comes from a <strong>discrete dynamical simulation</strong>. The system holds <code>n</code> components, each taking one of <code>b</code> integer values. Starting from a random state, each step applies three operators in sequence, and the system runs for thousands of steps while recording every state it visits:</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Operator</th><th>Role</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Mix</strong></td><td>Combines neighboring components to propose the next state (<code>additive</code>, <code>multiplicative</code>, or <code>triple_sum</code>)</td></tr>
+                        <tr><td><strong>Corrector (Constraint)</strong></td><td>Rejects or repairs states that violate the active constraint — this enforces the constraint type</td></tr>
+                        <tr><td><strong>Governor</strong></td><td>Steers long-run statistics toward a target (<code>uniform_distribution</code> or <code>entropy_maximization</code>)</td></tr>
+                    </tbody>
+                </table>
+
+                <p>The two measured outputs are defined operationally as:</p>
+
+                <div class="equation">
+Exploration (E) = (number of DISTINCT states visited) / (number of steps)
+                  → the "unique-state fraction" of the run, range [0, 1]
+                  → E = 1.0 means every step produced a brand-new state
+
+Complexity (C)  = Shannon-entropy-based BEHAVIORAL complexity of the
+                  visited-state sequence, range [0, 2.4467]
+                  → how rich/disordered the realized trajectory is
+                  → distinct from combinatorial (state-count) complexity
+                </div>
+
+                <div class="info-box">
+                    <h4>The Four Constraint Mechanisms</h4>
+                    <p>The raw experiments record four concrete Corrector rules, which group into the two universality classes:</p>
+                    <ul>
+                        <li><strong>adjacent_duplicates</strong> (structure-based): forbids states where two adjacent components are equal — a "repulsion" preventing neighboring repeats.</li>
+                        <li><strong>pattern_prohibition</strong> (structure-based): forbids specific sequential patterns in the component string.</li>
+                        <li><strong>sum_limits / sum_modulation</strong> (density-based): forbids states whose component sum lands on disallowed values.</li>
+                        <li><strong>local_entropy</strong> (density-based): rejects states with too little local disorder.</li>
+                    </ul>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Where CPR = n / bⁿ Comes From</h3>
+                    <p>CPR is not arbitrary. For the adjacent-duplicate Corrector, the original analysis measured that the <strong>per-step probability the constraint must act ≈ n / b</strong> (the "Corrector Constraint Ratio"): collisions get more likely with more positions <code>n</code> and less likely with more per-position freedom <code>b</code>.</p>
+                    <p>CPR lifts this local ratio to a global scale, comparing the <strong>linear</strong> growth of constraint pressure (∝ n) against the <strong>exponential</strong> size of the whole state space (bⁿ). When CPR is tiny, the state space dwarfs the constraints and the system has room to explore (emergent); when CPR is larger, constraints occupy a meaningful fraction of a small space (constrained). The <code>n/b</code> ratio is the microscopic seed; <code>n/bⁿ</code> is the global metric that predicts the regime across 35 orders of magnitude.</p>
+                </div>
+
                 <h3>3. The Phase Transition</h3>
 
                 <p>For <strong>density-based constraints</strong> (Class I), the transition from constrained to emergent behavior is modeled by a sigmoid function:</p>
@@ -796,8 +841,9 @@ Example:
 E = C / C_max
 
 Where:
-  C     = Realized complexity (measured)
-  C_max = 2.4467 (theoretical maximum)
+  C     = Realized behavioral complexity (measured from the run)
+  C_max = 2.4467 (maximum complexity OBSERVED in the 312 experiments,
+          an empirical calibration constant — not a theoretical bound)
 
 This is a LINEAR relationship, not sigmoid!
                 </div>
@@ -1142,10 +1188,17 @@ Model: E = C / C_max (linear relationship!)
 
                 <ul>
                     <li><strong>13 Configurations:</strong> (6,7), (8,7), (6,11), (8,11), (10,7), (12,11), (10,13), (12,13), (15,11), (20,13), (18,17), (25,19), (30,23)</li>
-                    <li><strong>4 Constraint Types:</strong> adjacent_duplicates (pattern_prohibition), sum_limits (sum_modulation), local_entropy</li>
+                    <li><strong>4 Constraint Mechanisms:</strong> adjacent_duplicates, pattern_prohibition (both structure-based); sum_limits / sum_modulation, local_entropy (both density-based)</li>
                     <li><strong>3 Mixing Types:</strong> additive, multiplicative, triple_sum</li>
                     <li><strong>2 Governor Types:</strong> uniform_distribution, entropy_maximization</li>
                 </ul>
+
+                <p><strong>Total:</strong> 13 × 4 × 3 × 2 = <strong>312 experiments</strong> (24 per configuration), verified against the dataset.</p>
+
+                <div class="info-box">
+                    <h4>On "27 architectures", "351", and the third governor</h4>
+                    <p>The hybrid model emits predictions over a nominal taxonomy of <strong>27 architecture types</strong> (3 constraint classes × 3 mixings × 3 governors). That taxonomy includes a third governor, <code>novelty_seeking</code>, which appears only in the model's adjustment-factor table and was <strong>never experimentally tested</strong>. Multiplying 27 types × 13 configurations gives 351 — the source of an earlier, incorrect "351 experiments" figure. The measured total is <strong>312</strong>; predictions for <code>novelty_seeking</code> are extrapolations. In analysis, <code>adjacent_duplicates</code> is grouped with <code>pattern_prohibition</code> (structure-based) and <code>sum_limits</code> is renamed <code>sum_modulation</code>.</p>
+                </div>
 
                 <p><strong>Coverage:</strong> CPR ranges from 5.1×10⁻⁵ (constrained) to 4.22×10⁻⁴⁰ (emergent), spanning 35 orders of magnitude.</p>
 
@@ -1153,36 +1206,37 @@ Model: E = C / C_max (linear relationship!)
 
                 <div class="highlight-box warning">
                     <h3>Initial Challenge: 30% Failure Rate</h3>
-                    <p>The universal sigmoid model achieved 70% accuracy but completely failed on 8 architectures (all pattern_prohibition combinations with high adjustment factors).</p>
+                    <p>The universal sigmoid model achieved 70% accuracy but failed on the structure-based architectures (8 of the model's 27 architecture types, all in the pattern_prohibition class with high adjustment factors).</p>
                 </div>
 
                 <table class="comparison-table">
                     <thead>
                         <tr>
-                            <th>Architecture Type</th>
-                            <th>Count</th>
+                            <th>Constraint Class</th>
+                            <th>Experiments</th>
                             <th>RMSE</th>
                             <th>R²</th>
-                            <th>Status</th>
+                            <th>Status under sigmoid</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Density-based (all)</td>
-                            <td>18/27</td>
+                            <td>Density-based (sum_modulation + local_entropy)</td>
+                            <td>156</td>
                             <td>&lt; 0.05</td>
                             <td>&gt; 0.95</td>
                             <td>✅ Success</td>
                         </tr>
                         <tr>
-                            <td>Structure-based (pattern_prohibition)</td>
-                            <td>9/27</td>
+                            <td>Structure-based (adjacent_duplicates + pattern_prohibition)</td>
+                            <td>156</td>
                             <td>0.40+</td>
                             <td>0.21</td>
                             <td>❌ Failure</td>
                         </tr>
                     </tbody>
                 </table>
+                <p style="font-size:0.9em;color:#555;">Each class = 2 mechanisms × 3 mixings × 2 governors × 13 configs = 156 experiments; 156 + 156 = 312.</p>
 
                 <h3>Hybrid Model System Results</h3>
 
@@ -1204,33 +1258,33 @@ Model: E = C / C_max (linear relationship!)
                     </thead>
                     <tbody>
                         <tr>
-                            <td>sum_modulation (all 9)</td>
+                            <td>sum_modulation</td>
                             <td>CPR Sigmoid</td>
-                            <td>117</td>
+                            <td>78</td>
                             <td>0.0189</td>
                             <td>0.9912</td>
                             <td>0.0421</td>
                         </tr>
                         <tr>
-                            <td>local_entropy (all 9)</td>
+                            <td>local_entropy</td>
                             <td>CPR Sigmoid</td>
-                            <td>117</td>
+                            <td>78</td>
                             <td>0.0276</td>
                             <td>0.9854</td>
                             <td>0.0687</td>
                         </tr>
                         <tr>
-                            <td>pattern_prohibition (all 9)</td>
+                            <td>pattern_prohibition (incl. adjacent_duplicates)</td>
                             <td>Complexity Linear</td>
-                            <td>117</td>
+                            <td>156</td>
                             <td>0.0220</td>
                             <td>0.9974</td>
                             <td>0.0303</td>
                         </tr>
                         <tr>
-                            <td><strong>Overall (all 27)</strong></td>
+                            <td><strong>Overall (312 experiments)</strong></td>
                             <td><strong>Hybrid</strong></td>
-                            <td><strong>351</strong></td>
+                            <td><strong>312</strong></td>
                             <td><strong>0.0228</strong></td>
                             <td><strong>0.9913</strong></td>
                             <td><strong>0.0687</strong></td>
@@ -1294,12 +1348,14 @@ Model: E = C / C_max (linear relationship!)
                 <h3>Key Validation Metrics</h3>
 
                 <div class="equation">
-Overall Performance (312 experiments, 27 architectures):
+Overall Performance (312 experiments):
 
-  Architecture Coverage:  100% (27/27)
-  Mean RMSE:             0.0228
-  Mean R²:               0.9913
-  Max Absolute Error:    0.0687
+  Architecture-type Coverage: 100% (27/27 taxonomy types predictable)
+  Mean RMSE:                  0.0228
+  Mean R²:                    0.9913
+  Max Absolute Error:         0.0687
+  (Coverage is over the model's 27-type taxonomy; metrics are computed
+   over the 312 measured runs using the 2 tested governors.)
 
   By Constraint Class:
     Density-based:   RMSE = 0.0233, R² = 0.9883

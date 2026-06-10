@@ -186,10 +186,10 @@ Use this checklist to verify the phase transition visualization chart is working
 - [ ] Current point appears in constrained region
 
 ### All Constraint Type Combinations
-For each constraint type, test with different mixing and governor types:
+For each constraint type, test with different mixing and governor types (this verifies the **UI/prediction** path runs without errors — it does not imply experimental validation; `novelty_seeking` predictions are untested extrapolations):
 - [ ] pattern_prohibition + additive + uniform_distribution
 - [ ] pattern_prohibition + multiplicative + entropy_maximization
-- [ ] local_entropy + additive + novelty_seeking
+- [ ] local_entropy + additive + novelty_seeking *(extrapolation — no measured data)*
 - [ ] sum_modulation + triple_sum + uniform_distribution
 - [ ] (Test at least 4-5 different combinations)
 - [ ] All combinations work without errors

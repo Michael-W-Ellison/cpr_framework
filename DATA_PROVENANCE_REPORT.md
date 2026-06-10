@@ -77,10 +77,10 @@ The 312 data points represent actual algorithmic outputs from these simulations.
 **Users Can Explore:**
 1. ✓ System size (n): 3-50
 2. ✓ Base (b): 2-50
-3. ✓ Constraint type: 3 options (pattern_prohibition, local_entropy, sum_modulation)
+3. ✓ Constraint type: 3 named classes selectable (pattern_prohibition, local_entropy, sum_modulation). Note: the raw dataset records 4 mechanisms — adjacent_duplicates is grouped into the pattern_prohibition class and sum_limits is renamed sum_modulation.
 4. ✓ Mixing type: 3 options (additive, multiplicative, triple_sum)
-5. ✓ Governor type: 3 options (uniform, entropy_max, novelty)
-6. ✓ Complexity value: 0-2.4467 (for pattern_prohibition)
+5. ✓ Governor type: 3 options selectable in the UI (uniform, entropy_max, novelty). **Only 2 were experimentally tested** (uniform_distribution, entropy_maximization); `novelty_seeking` is a prediction-only extrapolation and has no measured data.
+6. ✓ Complexity value: 0-2.4467 (for pattern_prohibition; 2.4467 is the empirical maximum observed, not a theoretical bound)
 
 **Real-Time Outputs:**
 7. ✓ CPR calculation
