@@ -560,6 +560,175 @@
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
         }
+
+        /* ============================================================================
+           SIMULATION TAB STYLES
+           ============================================================================ */
+
+        .state-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+            justify-content: center;
+            min-height: 80px;
+        }
+
+        .state-cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            transition: transform 0.15s, background-color 0.2s, box-shadow 0.15s;
+        }
+
+        .state-cell.changed {
+            transform: scale(1.15);
+            box-shadow: 0 0 12px rgba(102, 126, 234, 0.7);
+        }
+
+        .state-cell.corrected {
+            border: 3px solid #f59e0b;
+        }
+
+        .state-cell.governed {
+            border: 3px solid #10b981;
+        }
+
+        /* Color scale for state values (base up to 13) */
+        .state-cell[data-value="0"] { background: #1e3a8a; }
+        .state-cell[data-value="1"] { background: #1d4ed8; }
+        .state-cell[data-value="2"] { background: #2563eb; }
+        .state-cell[data-value="3"] { background: #3b82f6; }
+        .state-cell[data-value="4"] { background: #60a5fa; }
+        .state-cell[data-value="5"] { background: #0d9488; }
+        .state-cell[data-value="6"] { background: #14b8a6; }
+        .state-cell[data-value="7"] { background: #2dd4bf; }
+        .state-cell[data-value="8"] { background: #84cc16; }
+        .state-cell[data-value="9"] { background: #eab308; }
+        .state-cell[data-value="10"] { background: #f97316; }
+        .state-cell[data-value="11"] { background: #ef4444; }
+        .state-cell[data-value="12"] { background: #dc2626; }
+
+        .sim-status {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .sim-status.ready { background: #e2e8f0; color: #4a5568; }
+        .sim-status.running { background: #d1fae5; color: #065f46; }
+        .sim-status.paused { background: #fef3c7; color: #92400e; }
+        .sim-status.complete { background: #dbeafe; color: #1e40af; }
+
+        .sim-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .sim-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .sim-btn.start { background: #10b981; color: white; }
+        .sim-btn.start:hover { background: #059669; }
+        .sim-btn.pause { background: #f59e0b; color: white; }
+        .sim-btn.pause:hover { background: #d97706; }
+        .sim-btn.step { background: #3b82f6; color: white; }
+        .sim-btn.step:hover { background: #2563eb; }
+        .sim-btn.reset { background: #ef4444; color: white; }
+        .sim-btn.reset:hover { background: #dc2626; }
+        .sim-btn:disabled { background: #cbd5e0; cursor: not-allowed; }
+
+        .sim-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .sim-metric {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .sim-metric-label {
+            font-size: 0.85rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .sim-metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .sim-metric-value.prediction { color: #667eea; }
+        .sim-metric-value.measured { color: #10b981; }
+
+        .sim-comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .sim-comparison-row.header {
+            background: #f7fafc;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .speed-slider {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            background: #e2e8f0;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -579,6 +748,7 @@
             <button class="tab-btn" id="tab-explorer" aria-label="Interactive Explorer Tab">🔬 Interactive Explorer</button>
             <button class="tab-btn" id="tab-classes" aria-label="Constraint Classes Tab">🔀 Constraint Classes</button>
             <button class="tab-btn" id="tab-validation" aria-label="Validation Tab">✅ Validation</button>
+            <button class="tab-btn" id="tab-simulation" aria-label="Live Simulation Tab">▶️ Live Simulation</button>
         </div>
 
         <!-- TAB 1: OVERVIEW -->
@@ -1517,6 +1687,201 @@ Overall Performance (312 experiments):
                 <p>Note: Large errors in emergent regime reflect the L=0.8513 ceiling (not 1.0) in the sigmoid model.</p>
             </div>
         </div>
+
+        <!-- TAB 6: LIVE SIMULATION -->
+        <div class="tab-content" id="content-simulation">
+            <div class="theory-section">
+                <h2>Live Dynamical System Simulation</h2>
+
+                <div class="highlight-box warning">
+                    <h3>Implementation Note</h3>
+                    <p>This is a <strong>JavaScript re-implementation for illustration purposes</strong>,
+                    not the original experimental code. Results approximate but may not exactly match
+                    the original Python experiments. Feasible only for small state spaces
+                    (n &le; 10, b &le; 13) due to browser memory constraints.</p>
+                </div>
+
+                <p>Watch the Mix &rarr; Corrector &rarr; Governor loop run in real-time. Configure parameters,
+                see the CPR prediction <em>before</em> the simulation runs, then observe how measured
+                exploration and complexity accumulate.</p>
+            </div>
+
+            <!-- Configuration and Prediction Grid -->
+            <div class="main-grid">
+                <!-- Left: Configuration Panel -->
+                <div class="control-panel">
+                    <h2>Configuration</h2>
+
+                    <div class="input-group">
+                        <label for="sim-n">State Length (n)</label>
+                        <input type="number" id="sim-n" value="6" min="3" max="10" step="1">
+                        <small>Range: 3-10</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="sim-b">Base (b)</label>
+                        <input type="number" id="sim-b" value="7" min="2" max="13" step="1">
+                        <small>Range: 2-13</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="sim-constraint">Constraint Mechanism</label>
+                        <select id="sim-constraint">
+                            <option value="adjacent_duplicates">Adjacent Duplicates (structure)</option>
+                            <option value="pattern_prohibition">Pattern Prohibition (structure)</option>
+                            <option value="sum_modulation">Sum Modulation (density)</option>
+                            <option value="local_entropy">Local Entropy (density)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="sim-mixing">Mixing Function</label>
+                        <select id="sim-mixing">
+                            <option value="additive">Additive</option>
+                            <option value="multiplicative">Multiplicative</option>
+                            <option value="triple_sum">Triple Sum</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="sim-governor">Governor</label>
+                        <select id="sim-governor">
+                            <option value="uniform_distribution">Uniform Distribution</option>
+                            <option value="entropy_maximization">Entropy Maximization</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="sim-max-steps">Maximum Steps</label>
+                        <input type="number" id="sim-max-steps" value="1000" min="100" max="10000" step="100">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="sim-gov-interval">Governor Interval</label>
+                        <input type="number" id="sim-gov-interval" value="50" min="10" max="500" step="10">
+                        <small>Steps between governor interventions</small>
+                    </div>
+                </div>
+
+                <!-- Right: Prediction Panel -->
+                <div class="results-panel" id="sim-prediction-panel">
+                    <h2>CPR Prediction (Before Running)</h2>
+
+                    <div class="result-card">
+                        <div class="result-label">Calculated CPR</div>
+                        <div class="result-value" id="sim-pred-cpr">-</div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">log₁₀(CPR)</div>
+                        <div class="result-value" id="sim-pred-logcpr">-</div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">Regime</div>
+                        <div class="result-value" id="sim-pred-regime">-</div>
+                    </div>
+
+                    <div class="result-card highlight">
+                        <div class="result-label">Predicted Exploration (E)</div>
+                        <div class="result-value" id="sim-pred-exploration">-</div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label">Model Used</div>
+                        <div class="result-value" id="sim-pred-model" style="font-size: 0.9rem;">-</div>
+                    </div>
+
+                    <button class="preset-btn" id="sim-update-prediction" style="margin-top: 15px; width: 100%;">
+                        Update Prediction
+                    </button>
+                </div>
+            </div>
+
+            <!-- Simulation Controls -->
+            <div class="theory-section" style="margin-top: 20px;">
+                <h2>Simulation Controls</h2>
+
+                <div class="sim-status ready" id="sim-status">Ready to start</div>
+
+                <div class="sim-controls">
+                    <button class="sim-btn start" id="sim-start">▶ Start</button>
+                    <button class="sim-btn pause" id="sim-pause" disabled>⏸ Pause</button>
+                    <button class="sim-btn step" id="sim-step">⏭ Step</button>
+                    <button class="sim-btn reset" id="sim-reset">↺ Reset</button>
+                </div>
+
+                <div class="speed-control">
+                    <label for="sim-speed">Speed:</label>
+                    <input type="range" id="sim-speed" class="speed-slider" min="1" max="100" value="30">
+                    <span id="sim-speed-label">30 steps/sec</span>
+                </div>
+            </div>
+
+            <!-- Live State Visualization -->
+            <div class="theory-section" style="margin-top: 20px;">
+                <h2>Current State</h2>
+                <div class="state-grid" id="sim-state-display">
+                    <div class="state-cell" data-value="0">-</div>
+                </div>
+
+                <div class="sim-metrics-grid">
+                    <div class="sim-metric">
+                        <div class="sim-metric-label">Step</div>
+                        <div class="sim-metric-value" id="sim-step-count">0</div>
+                    </div>
+                    <div class="sim-metric">
+                        <div class="sim-metric-label">Unique States</div>
+                        <div class="sim-metric-value" id="sim-unique-count">0</div>
+                    </div>
+                    <div class="sim-metric">
+                        <div class="sim-metric-label">State Space</div>
+                        <div class="sim-metric-value" id="sim-state-space">-</div>
+                    </div>
+                    <div class="sim-metric">
+                        <div class="sim-metric-label">Exploration (E)</div>
+                        <div class="sim-metric-value measured" id="sim-exploration">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Chart -->
+            <div class="chart-container" style="margin-top: 20px;">
+                <h2>Exploration Over Time</h2>
+                <div class="chart-wrapper">
+                    <canvas id="sim-live-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Results Comparison -->
+            <div class="theory-section" id="sim-results" style="margin-top: 20px; display: none;">
+                <h2>Results: Prediction vs Measurement</h2>
+
+                <div class="sim-comparison-row header">
+                    <div>Metric</div>
+                    <div>Predicted</div>
+                    <div>Measured</div>
+                    <div>Difference</div>
+                </div>
+                <div class="sim-comparison-row">
+                    <div>Exploration (E)</div>
+                    <div id="sim-result-pred-e">-</div>
+                    <div id="sim-result-meas-e">-</div>
+                    <div id="sim-result-diff-e">-</div>
+                </div>
+                <div class="sim-comparison-row">
+                    <div>Unique States</div>
+                    <div id="sim-result-pred-unique">-</div>
+                    <div id="sim-result-meas-unique">-</div>
+                    <div id="sim-result-diff-unique">-</div>
+                </div>
+
+                <div class="highlight-box" style="margin-top: 20px;">
+                    <h3>Interpretation</h3>
+                    <p id="sim-result-interpretation">-</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -2312,6 +2677,9 @@ Overall Performance (312 experiments):
                         ensureValidationChart();
                     } else if (contentId === 'content-classes') {
                         ensureClassScatterChart();
+                    } else if (contentId === 'content-simulation') {
+                        ensureSimChart();
+                        updateSimUI();
                     }
                 });
             });
@@ -3034,6 +3402,630 @@ Overall Performance (312 experiments):
         }
 
         // ============================================================================
+        // SIMULATION ENGINE
+        // ============================================================================
+
+        const SimState = {
+            state: [],
+            uniqueStates: new Set(),
+            stepCount: 0,
+            shouldIncrease: true,
+            running: false,
+            paused: false,
+            complete: false,
+            animationId: null,
+            lastStepTime: 0,
+            chartHistory: [],
+            tally: {},
+            prediction: null,
+            maxSteps: 1000,
+            stepsPerSecond: 30,
+            governorInterval: 50
+        };
+
+        let simChart = null;
+
+        // --- Corrector Functions ---
+
+        function correctorAdjacentDuplicates(state, shouldIncrease, base) {
+            const localState = [...state];
+            let localShouldIncrease = shouldIncrease;
+            const n = state.length;
+            let iterations = 0;
+            const maxIterations = n * 10;
+
+            let changed = true;
+            while (changed && iterations < maxIterations) {
+                changed = false;
+                iterations++;
+                for (let i = 0; i < n; i++) {
+                    if (localState[i] === localState[(i + 1) % n]) {
+                        if (localShouldIncrease) {
+                            localState[i] = (localState[i] + 1) % base;
+                        } else {
+                            localState[i] = (localState[i] - 1 + base) % base;
+                        }
+                        localShouldIncrease = !localShouldIncrease;
+                        changed = true;
+                    }
+                }
+            }
+            return { state: localState, shouldIncrease: localShouldIncrease };
+        }
+
+        function correctorPatternProhibition(state, shouldIncrease, base) {
+            const localState = [...state];
+            let localShouldIncrease = shouldIncrease;
+            const n = state.length;
+
+            for (let i = 0; i < n; i++) {
+                const i1 = (i + 1) % n;
+                const i2 = (i + 2) % n;
+                if (localState[i] === localState[i1] && localState[i1] === localState[i2]) {
+                    if (localShouldIncrease) {
+                        localState[i1] = (localState[i1] + 1) % base;
+                    } else {
+                        localState[i1] = (localState[i1] - 1 + base) % base;
+                    }
+                    localShouldIncrease = !localShouldIncrease;
+                }
+            }
+            return { state: localState, shouldIncrease: localShouldIncrease };
+        }
+
+        function correctorSumModulation(state, shouldIncrease, base) {
+            const localState = [...state];
+            let localShouldIncrease = shouldIncrease;
+
+            const sum = localState.reduce((a, b) => a + b, 0);
+            const forbidden = [0];
+
+            if (forbidden.includes(sum % base)) {
+                if (localShouldIncrease) {
+                    localState[0] = (localState[0] + 1) % base;
+                } else {
+                    localState[0] = (localState[0] - 1 + base) % base;
+                }
+                localShouldIncrease = !localShouldIncrease;
+            }
+            return { state: localState, shouldIncrease: localShouldIncrease };
+        }
+
+        function correctorLocalEntropy(state, shouldIncrease, base) {
+            const localState = [...state];
+            let localShouldIncrease = shouldIncrease;
+            const n = state.length;
+            const windowSize = Math.min(3, n);
+
+            for (let i = 0; i <= n - windowSize; i++) {
+                const window = localState.slice(i, i + windowSize);
+                const unique = new Set(window).size;
+
+                if (unique < 2) {
+                    const midIdx = i + Math.floor(windowSize / 2);
+                    if (localShouldIncrease) {
+                        localState[midIdx] = (localState[midIdx] + 1) % base;
+                    } else {
+                        localState[midIdx] = (localState[midIdx] - 1 + base) % base;
+                    }
+                    localShouldIncrease = !localShouldIncrease;
+                }
+            }
+            return { state: localState, shouldIncrease: localShouldIncrease };
+        }
+
+        function applyCorrector(state, shouldIncrease, base, correctorType) {
+            switch (correctorType) {
+                case 'adjacent_duplicates':
+                    return correctorAdjacentDuplicates(state, shouldIncrease, base);
+                case 'pattern_prohibition':
+                    return correctorPatternProhibition(state, shouldIncrease, base);
+                case 'sum_modulation':
+                    return correctorSumModulation(state, shouldIncrease, base);
+                case 'local_entropy':
+                    return correctorLocalEntropy(state, shouldIncrease, base);
+                default:
+                    return { state: [...state], shouldIncrease };
+            }
+        }
+
+        // --- Mixing Functions ---
+
+        function mixAdditive(state, base) {
+            const n = state.length;
+            return state.map((val, i) => (val + state[(i + 1) % n]) % base);
+        }
+
+        function mixMultiplicative(state, base) {
+            const n = state.length;
+            return state.map((val, i) => (val * state[(i + 1) % n]) % base);
+        }
+
+        function mixTripleSum(state, base) {
+            const n = state.length;
+            return state.map((val, i) =>
+                (val + state[(i + 1) % n] + state[(i + 2) % n]) % base
+            );
+        }
+
+        function applyMixing(state, base, mixingType) {
+            switch (mixingType) {
+                case 'additive':
+                    return mixAdditive(state, base);
+                case 'multiplicative':
+                    return mixMultiplicative(state, base);
+                case 'triple_sum':
+                    return mixTripleSum(state, base);
+                default:
+                    return mixAdditive(state, base);
+            }
+        }
+
+        // --- Governor Functions ---
+
+        function governorUniformDistribution(state, tally, base, stepCount, interval) {
+            if (stepCount % interval !== 0 || stepCount === 0) {
+                return { state: [...state], modified: false };
+            }
+
+            let maxDigit = 0, minDigit = 0;
+            let maxCount = -Infinity, minCount = Infinity;
+
+            for (let i = 0; i < base; i++) {
+                const count = tally[i] || 0;
+                if (count > maxCount) { maxCount = count; maxDigit = i; }
+                if (count < minCount) { minCount = count; minDigit = i; }
+            }
+
+            if (maxDigit === minDigit || maxCount === minCount) {
+                return { state: [...state], modified: false };
+            }
+
+            const newState = [...state];
+            const idx = newState.indexOf(maxDigit);
+            if (idx !== -1) {
+                newState[idx] = minDigit;
+            }
+
+            return { state: newState, modified: idx !== -1 };
+        }
+
+        function governorEntropyMaximization(state, tally, base, stepCount, interval) {
+            if (stepCount % interval !== 0 || stepCount === 0) {
+                return { state: [...state], modified: false };
+            }
+
+            const newState = [...state];
+            const digitCounts = {};
+            for (const d of state) {
+                digitCounts[d] = (digitCounts[d] || 0) + 1;
+            }
+
+            let mostRepeated = -1, maxRepeats = 0;
+            for (const [digit, count] of Object.entries(digitCounts)) {
+                if (count > maxRepeats) {
+                    maxRepeats = count;
+                    mostRepeated = parseInt(digit);
+                }
+            }
+
+            if (maxRepeats > 1) {
+                let replacement = -1;
+                for (let i = 0; i < base; i++) {
+                    if (!digitCounts[i]) {
+                        replacement = i;
+                        break;
+                    }
+                }
+
+                if (replacement !== -1) {
+                    const idx = newState.indexOf(mostRepeated);
+                    if (idx !== -1) {
+                        newState[idx] = replacement;
+                        return { state: newState, modified: true };
+                    }
+                }
+            }
+
+            return { state: newState, modified: false };
+        }
+
+        function applyGovernor(state, tally, base, stepCount, governorType, interval) {
+            switch (governorType) {
+                case 'uniform_distribution':
+                    return governorUniformDistribution(state, tally, base, stepCount, interval);
+                case 'entropy_maximization':
+                    return governorEntropyMaximization(state, tally, base, stepCount, interval);
+                default:
+                    return { state: [...state], modified: false };
+            }
+        }
+
+        // --- Simulation Core ---
+
+        function stateToKey(state) {
+            return state.join(',');
+        }
+
+        function initializeSimState(n, b) {
+            SimState.state = [];
+            for (let i = 0; i < n; i++) {
+                SimState.state.push(Math.floor(Math.random() * b));
+            }
+            SimState.uniqueStates = new Set([stateToKey(SimState.state)]);
+            SimState.stepCount = 0;
+            SimState.shouldIncrease = true;
+            SimState.running = false;
+            SimState.paused = false;
+            SimState.complete = false;
+            SimState.animationId = null;
+            SimState.lastStepTime = 0;
+            SimState.chartHistory = [{ step: 0, exploration: 0, unique: 1 }];
+            SimState.tally = {};
+            for (const d of SimState.state) {
+                SimState.tally[d] = (SimState.tally[d] || 0) + 1;
+            }
+        }
+
+        function runSimulationStep() {
+            const n = parseInt(document.getElementById('sim-n').value);
+            const b = parseInt(document.getElementById('sim-b').value);
+            const constraint = document.getElementById('sim-constraint').value;
+            const mixing = document.getElementById('sim-mixing').value;
+            const governor = document.getElementById('sim-governor').value;
+
+            // Step 1: Mix
+            let newState = applyMixing(SimState.state, b, mixing);
+
+            // Step 2: Correct
+            const corrected = applyCorrector(newState, SimState.shouldIncrease, b, constraint);
+            newState = corrected.state;
+            SimState.shouldIncrease = corrected.shouldIncrease;
+
+            // Step 3: Govern
+            const governed = applyGovernor(newState, SimState.tally, b, SimState.stepCount, governor, SimState.governorInterval);
+            newState = governed.state;
+
+            // Update tally
+            for (const d of newState) {
+                SimState.tally[d] = (SimState.tally[d] || 0) + 1;
+            }
+
+            // Track unique states
+            const key = stateToKey(newState);
+            SimState.uniqueStates.add(key);
+
+            // Update state
+            SimState.state = newState;
+            SimState.stepCount++;
+
+            // Record history (downsampled for long runs)
+            const recordInterval = SimState.maxSteps > 2000 ? Math.floor(SimState.maxSteps / 200) : 10;
+            if (SimState.stepCount % recordInterval === 0 || SimState.stepCount === SimState.maxSteps) {
+                const exploration = SimState.uniqueStates.size / SimState.stepCount;
+                SimState.chartHistory.push({
+                    step: SimState.stepCount,
+                    exploration: exploration,
+                    unique: SimState.uniqueStates.size
+                });
+            }
+
+            return { corrected: corrected.state !== SimState.state, governed: governed.modified };
+        }
+
+        function updateSimUI() {
+            const n = parseInt(document.getElementById('sim-n').value);
+            const b = parseInt(document.getElementById('sim-b').value);
+            const stateSpace = Math.pow(b, n);
+
+            // Update state display
+            const container = document.getElementById('sim-state-display');
+            container.innerHTML = '';
+            for (let i = 0; i < SimState.state.length; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'state-cell';
+                cell.setAttribute('data-value', SimState.state[i]);
+                cell.textContent = SimState.state[i];
+                container.appendChild(cell);
+            }
+
+            // Update metrics
+            document.getElementById('sim-step-count').textContent = SimState.stepCount.toLocaleString();
+            document.getElementById('sim-unique-count').textContent = SimState.uniqueStates.size.toLocaleString();
+            document.getElementById('sim-state-space').textContent = stateSpace > 1000000 ?
+                stateSpace.toExponential(2) : stateSpace.toLocaleString();
+
+            const exploration = SimState.stepCount > 0 ?
+                (SimState.uniqueStates.size / SimState.stepCount) : 0;
+            document.getElementById('sim-exploration').textContent = (exploration * 100).toFixed(2) + '%';
+
+            // Update chart
+            updateSimChart();
+        }
+
+        function updateSimChart() {
+            if (!simChart) {
+                ensureSimChart();
+            }
+            if (!simChart) return;
+
+            simChart.data.labels = SimState.chartHistory.map(h => h.step);
+            simChart.data.datasets[0].data = SimState.chartHistory.map(h => h.exploration * 100);
+
+            if (SimState.prediction !== null) {
+                simChart.data.datasets[1].data = SimState.chartHistory.map(() => SimState.prediction * 100);
+            }
+
+            simChart.update('none');
+        }
+
+        function ensureSimChart() {
+            if (simChart) return;
+
+            const canvas = document.getElementById('sim-live-chart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            simChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [0],
+                    datasets: [
+                        {
+                            label: 'Measured Exploration (%)',
+                            data: [0],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Predicted Exploration (%)',
+                            data: [],
+                            borderColor: '#667eea',
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Step' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Exploration (%)' },
+                            min: 0,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top' }
+                    }
+                }
+            });
+        }
+
+        function simulationLoop(timestamp) {
+            if (!SimState.running || SimState.paused) return;
+
+            const msPerStep = 1000 / SimState.stepsPerSecond;
+            if (timestamp - SimState.lastStepTime >= msPerStep) {
+                runSimulationStep();
+                updateSimUI();
+                SimState.lastStepTime = timestamp;
+
+                if (SimState.stepCount >= SimState.maxSteps) {
+                    completeSimulation();
+                    return;
+                }
+            }
+
+            SimState.animationId = requestAnimationFrame(simulationLoop);
+        }
+
+        function startSimulation() {
+            if (SimState.complete) {
+                resetSimulation();
+            }
+
+            const n = parseInt(document.getElementById('sim-n').value);
+            const b = parseInt(document.getElementById('sim-b').value);
+
+            if (SimState.stepCount === 0) {
+                initializeSimState(n, b);
+                updateSimPrediction();
+            }
+
+            SimState.running = true;
+            SimState.paused = false;
+            SimState.maxSteps = parseInt(document.getElementById('sim-max-steps').value);
+            SimState.governorInterval = parseInt(document.getElementById('sim-gov-interval').value);
+            SimState.stepsPerSecond = parseInt(document.getElementById('sim-speed').value);
+
+            updateSimStatus('running', 'Running...');
+            document.getElementById('sim-start').disabled = true;
+            document.getElementById('sim-pause').disabled = false;
+            document.getElementById('sim-step').disabled = true;
+
+            SimState.lastStepTime = performance.now();
+            SimState.animationId = requestAnimationFrame(simulationLoop);
+        }
+
+        function pauseSimulation() {
+            SimState.paused = true;
+            SimState.running = false;
+            if (SimState.animationId) {
+                cancelAnimationFrame(SimState.animationId);
+            }
+
+            updateSimStatus('paused', 'Paused at step ' + SimState.stepCount);
+            document.getElementById('sim-start').disabled = false;
+            document.getElementById('sim-pause').disabled = true;
+            document.getElementById('sim-step').disabled = false;
+        }
+
+        function stepSimulation() {
+            const n = parseInt(document.getElementById('sim-n').value);
+            const b = parseInt(document.getElementById('sim-b').value);
+
+            if (SimState.stepCount === 0) {
+                initializeSimState(n, b);
+                updateSimPrediction();
+            }
+
+            if (SimState.stepCount < SimState.maxSteps) {
+                runSimulationStep();
+                updateSimUI();
+
+                if (SimState.stepCount >= parseInt(document.getElementById('sim-max-steps').value)) {
+                    completeSimulation();
+                } else {
+                    updateSimStatus('paused', 'Step ' + SimState.stepCount);
+                }
+            }
+        }
+
+        function resetSimulation() {
+            if (SimState.animationId) {
+                cancelAnimationFrame(SimState.animationId);
+            }
+
+            const n = parseInt(document.getElementById('sim-n').value);
+            const b = parseInt(document.getElementById('sim-b').value);
+            initializeSimState(n, b);
+            SimState.maxSteps = parseInt(document.getElementById('sim-max-steps').value);
+            SimState.governorInterval = parseInt(document.getElementById('sim-gov-interval').value);
+
+            updateSimStatus('ready', 'Ready to start');
+            document.getElementById('sim-start').disabled = false;
+            document.getElementById('sim-pause').disabled = true;
+            document.getElementById('sim-step').disabled = false;
+            document.getElementById('sim-results').style.display = 'none';
+
+            updateSimUI();
+            updateSimPrediction();
+        }
+
+        function completeSimulation() {
+            SimState.running = false;
+            SimState.complete = true;
+            if (SimState.animationId) {
+                cancelAnimationFrame(SimState.animationId);
+            }
+
+            updateSimStatus('complete', 'Complete! ' + SimState.stepCount + ' steps');
+            document.getElementById('sim-start').disabled = false;
+            document.getElementById('sim-pause').disabled = true;
+            document.getElementById('sim-step').disabled = true;
+
+            showSimResults();
+        }
+
+        function updateSimStatus(statusClass, message) {
+            const el = document.getElementById('sim-status');
+            el.className = 'sim-status ' + statusClass;
+            el.textContent = message;
+        }
+
+        function updateSimPrediction() {
+            const n = parseInt(document.getElementById('sim-n').value);
+            const b = parseInt(document.getElementById('sim-b').value);
+            const constraint = document.getElementById('sim-constraint').value;
+            const mixing = document.getElementById('sim-mixing').value;
+            const governor = document.getElementById('sim-governor').value;
+
+            const cpr = calculateCPR(n, b);
+            const logCpr = Math.log10(cpr);
+            const regime = determineRegime(logCpr);
+
+            document.getElementById('sim-pred-cpr').textContent = cpr.toExponential(4);
+            document.getElementById('sim-pred-logcpr').textContent = logCpr.toFixed(4);
+            document.getElementById('sim-pred-regime').textContent =
+                regime.charAt(0).toUpperCase() + regime.slice(1);
+
+            const complexity = 1.5;
+            const prediction = predictExploration(cpr, complexity, constraint, mixing, governor);
+            SimState.prediction = prediction.finalPrediction;
+
+            document.getElementById('sim-pred-exploration').textContent =
+                (prediction.finalPrediction * 100).toFixed(2) + '%';
+            document.getElementById('sim-pred-model').textContent =
+                prediction.modelUsed.replace('_', ' ');
+
+            if (simChart) {
+                updateSimChart();
+            }
+        }
+
+        function showSimResults() {
+            const measuredE = SimState.uniqueStates.size / SimState.stepCount;
+            const predictedE = SimState.prediction;
+            const diffE = Math.abs(measuredE - predictedE);
+
+            const n = parseInt(document.getElementById('sim-n').value);
+            const b = parseInt(document.getElementById('sim-b').value);
+            const stateSpace = Math.pow(b, n);
+            const predictedUnique = Math.round(predictedE * SimState.stepCount);
+
+            document.getElementById('sim-result-pred-e').textContent = (predictedE * 100).toFixed(2) + '%';
+            document.getElementById('sim-result-meas-e').textContent = (measuredE * 100).toFixed(2) + '%';
+            document.getElementById('sim-result-diff-e').textContent = (diffE * 100).toFixed(2) + '%';
+
+            document.getElementById('sim-result-pred-unique').textContent = predictedUnique.toLocaleString();
+            document.getElementById('sim-result-meas-unique').textContent = SimState.uniqueStates.size.toLocaleString();
+            document.getElementById('sim-result-diff-unique').textContent =
+                Math.abs(SimState.uniqueStates.size - predictedUnique).toLocaleString();
+
+            let interpretation = '';
+            if (diffE < 0.05) {
+                interpretation = 'Excellent match! The CPR prediction closely matches the measured exploration.';
+            } else if (diffE < 0.15) {
+                interpretation = 'Good agreement. The prediction captures the exploration regime correctly.';
+            } else if (diffE < 0.30) {
+                interpretation = 'Moderate deviation. The regime classification is correct but per-point accuracy varies.';
+            } else {
+                interpretation = 'Significant deviation. This may reflect architecture-specific factors or the inherent variance in the dynamical system.';
+            }
+
+            const regime = document.getElementById('sim-pred-regime').textContent.toLowerCase();
+            interpretation += ' This configuration operates in the ' + regime + ' regime.';
+
+            document.getElementById('sim-result-interpretation').textContent = interpretation;
+            document.getElementById('sim-results').style.display = 'block';
+        }
+
+        function initSimulation() {
+            document.getElementById('sim-start').addEventListener('click', startSimulation);
+            document.getElementById('sim-pause').addEventListener('click', pauseSimulation);
+            document.getElementById('sim-step').addEventListener('click', stepSimulation);
+            document.getElementById('sim-reset').addEventListener('click', resetSimulation);
+
+            document.getElementById('sim-speed').addEventListener('input', function() {
+                SimState.stepsPerSecond = parseInt(this.value);
+                document.getElementById('sim-speed-label').textContent = this.value + ' steps/sec';
+            });
+
+            document.getElementById('sim-update-prediction').addEventListener('click', function() {
+                updateSimPrediction();
+                resetSimulation();
+            });
+
+            ['sim-n', 'sim-b', 'sim-constraint', 'sim-mixing', 'sim-governor'].forEach(id => {
+                document.getElementById(id).addEventListener('change', updateSimPrediction);
+            });
+
+            updateSimPrediction();
+            resetSimulation();
+        }
+
+        // ============================================================================
         // INITIALIZATION
         // ============================================================================
 
@@ -3089,6 +4081,9 @@ Overall Performance (312 experiments):
             document.getElementById('btn-emergent').addEventListener('click', function() {
                 loadPreset('emergent');
             });
+
+            // Initialize simulation tab
+            initSimulation();
 
             // Initial calculation
             updateCalculations();
