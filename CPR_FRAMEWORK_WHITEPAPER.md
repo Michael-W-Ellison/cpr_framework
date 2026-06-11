@@ -274,13 +274,15 @@ This simple rule achieves 100% architecture coverage.
 For constraints that reduce state density uniformly, exploration follows a sigmoid transition:
 
 ```
-E = L / (1 + exp(-k × (log₁₀(Adjusted_CPR) - x₀)))
+E = L / (1 + exp(k × (log₁₀(Adjusted_CPR) - x₀)))
 ```
 
 **Universal Parameters:**
 - L = 0.8513 — Upper asymptote (exploration ceiling)
 - k = 46.7978 — Steepness parameter (indicates first-order transition)
 - x₀ = -8.2999 — Critical point (CPR_critical ≈ 5.01×10⁻⁹)
+
+**Direction (sign convention):** E → L as Adjusted_CPR falls below the critical point (emergent regime); E → 0 as it rises above (constrained regime). Earlier project documents wrote the exponent as −k with positive k, which rises with CPR — the opposite of every measurement in the dataset (mean measured E ≈ 0.64 where log₁₀(CPR) < −15 versus ≈ 0.09 where log₁₀(CPR) > −7). The form above, equivalent to a negative k in the old notation, is the orientation consistent with the data and the regime definitions.
 
 **Adjusted CPR:**
 ```
@@ -289,9 +291,7 @@ Adjusted_CPR = CPR × Architecture_Adjustment_Factor
 
 Adjustment factors range from 1.5× to 7.34× depending on architectural configuration, accounting for the compounding effects of mixing types and governors.
 
-**Performance:**
-- R² > 0.95
-- RMSE < 0.05
+**Performance:** The sigmoid describes the central trend and reliably classifies the regime. Recomputing point-prediction accuracy directly from the 312-experiment dataset does **not** reproduce earlier R² > 0.95 / RMSE < 0.05 claims for this class: at any given CPR, density-based architectures split into high-performing bands (e.g., additive + uniform_distribution) and suppressed bands (e.g., multiplicative mixing, near-zero exploration regardless of CPR), and the ×1.5–×7.34 adjustment factors shift log₁₀(CPR) by less than one order of magnitude — far too little to bridge those bands. The sigmoid should be used as a regime classifier with a typical-performance curve, not as a per-architecture point predictor. (By contrast, the structure-based complexity model's documented metrics do reproduce: live R² ≈ 0.997.)
 
 ### 5.3 Complexity-Based Model (Structure-Based Constraints)
 

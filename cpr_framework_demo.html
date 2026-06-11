@@ -747,7 +747,7 @@ Complexity (C)  = Shannon-entropy-based BEHAVIORAL complexity of the
                 <p>For <strong>density-based constraints</strong> (Class I), the transition from constrained to emergent behavior is modeled by a sigmoid function:</p>
 
                 <div class="equation">
-E = L / (1 + e^(-k × (log₁₀(Adjusted_CPR) - x₀)))
+E = L / (1 + e^(k × (log₁₀(Adjusted_CPR) - x₀)))
 
 Parameters (fitted to 70 data points in critical transition zone):
   L  = 0.8513  (maximum exploration ceiling)
@@ -755,9 +755,17 @@ Parameters (fitted to 70 data points in critical transition zone):
   x₀ = -8.2999 (critical point)
 
 Critical Adjusted_CPR: 10^(-8.3) ≈ 5.01 × 10^(-9)
+
+Direction: E → L as CPR falls below the critical point (emergent),
+           E → 0 as CPR rises above it (constrained)
                 </div>
 
                 <p>The extremely high steepness (k ≈ 47) indicates a "snap-like" transition, suggesting high cooperativity among system components and potential hysteresis effects.</p>
+
+                <div class="highlight-box warning">
+                    <h3>Sign-Convention Correction</h3>
+                    <p>Earlier project documents wrote this formula with <code>e^(−k × …)</code> and a positive k. That form rises with CPR — the opposite of every measurement in the dataset (mean measured exploration is 0.64 where log₁₀(CPR) &lt; −15 versus 0.09 where log₁₀(CPR) &gt; −7). The form shown above, equivalent to quoting k as negative in the old form, is the orientation that matches the data, the regime definitions, and the description of L as the emergent-regime ceiling.</p>
+                </div>
 
                 <div class="highlight-box">
                     <h3>Model Scope and Interpretation</h3>
@@ -967,6 +975,15 @@ Result: 100% architecture coverage
                             <span class="slider-value" id="complexityValue">1.20</span>
                         </div>
                     </div>
+
+                    <div class="input-group">
+                        <label for="estimateComplexity">
+                            <input type="checkbox" id="estimateComplexity" aria-label="Estimate complexity from experimental data">
+                            Estimate C from experimental data
+                            <div class="label-description">Interpolates measured complexity from the structure-based experiments at the nearest tested CPR values, replacing the manual slider. Applies only to pattern_prohibition.</div>
+                        </label>
+                        <div class="label-description" id="estimateNote"></div>
+                    </div>
                 </div>
 
                 <div class="results-panel">
@@ -1007,10 +1024,10 @@ Result: 100% architecture coverage
             </div>
 
             <div class="chart-container">
-                <h2>Phase Transition Visualization</h2>
+                <h2 id="chartTitle">Phase Transition Visualization</h2>
                 <div class="info-box">
                     <h4>About This Chart</h4>
-                    <p>This visualization shows the relationship between CPR and Exploration. The red curve represents the universal sigmoid model for density-based constraints. The blue point shows your current configuration. For pattern_prohibition (structure-based), the prediction uses the complexity model instead.</p>
+                    <p id="chartAbout">This visualization shows the relationship between CPR and Exploration. The purple curve represents the universal sigmoid model for density-based constraints. Teal dots are real experimental measurements. The red point shows your current configuration's prediction.</p>
                 </div>
                 <div class="chart-wrapper">
                     <div class="chart-loading" id="chartLoading">Loading chart...</div>
@@ -1166,6 +1183,14 @@ Model: E = C / C_max (linear relationship!)
 
                 <p>Note: C/E ratio <strong>nearly constant</strong> across all regimes!</p>
 
+                <h3>Seeing the Linear Relationship: All 156 Structure-Based Experiments</h3>
+
+                <p>The chart below plots measured Complexity against measured Exploration for every structure-based experiment in the dataset (pattern_prohibition + adjacent_duplicates, 156 points). The dashed line is the complexity model E = (C/C<sub>max</sub>)<sup>0.90</sup> × 10<sup>−0.015</sup>. The tight clustering along the line is the experimental evidence for treating Class II constraints differently.</p>
+
+                <div class="chart-wrapper">
+                    <canvas id="classScatterChart" aria-label="Scatter chart of measured complexity versus measured exploration for structure-based experiments"></canvas>
+                </div>
+
                 <h3>Practical Implications</h3>
 
                 <div class="info-box">
@@ -1241,8 +1266,13 @@ Model: E = C / C_max (linear relationship!)
                 <h3>Hybrid Model System Results</h3>
 
                 <div class="highlight-box success">
-                    <h3>Solution: 100% Accuracy Achieved</h3>
-                    <p>By recognizing the two constraint classes and applying appropriate models, we achieve excellent predictions across all 27 architectures.</p>
+                    <h3>Solution: 100% Architecture Coverage</h3>
+                    <p>By recognizing the two constraint classes and applying appropriate models, every architecture type receives a prediction from an appropriate model.</p>
+                </div>
+
+                <div class="highlight-box warning">
+                    <h3>Reproducibility Note on the Table Below</h3>
+                    <p>These figures come from the original analysis. Live recomputation from the embedded dataset (see the chart further down) confirms the <strong>pattern_prohibition / structure-based row</strong> (R² ≈ 0.997) but <strong>could not reproduce the density-based rows</strong> — the recomputed density-class fit is far weaker because architectures form distinct performance bands around the sigmoid's central trend. The density rows below should be read as describing the fit to the central tendency, not per-experiment accuracy.</p>
                 </div>
 
                 <table class="comparison-table">
@@ -1291,6 +1321,22 @@ Model: E = C / C_max (linear relationship!)
                         </tr>
                     </tbody>
                 </table>
+
+                <h3>Predicted vs Measured: All 312 Experiments, Computed Live</h3>
+
+                <p>This chart is not a static image. Your browser runs the same hybrid prediction code used in the Interactive Explorer against every one of the 312 embedded experiments, then plots the model's prediction against the measured exploration. Points on the dashed diagonal are perfect predictions. RMSE and R² below are computed live from these points.</p>
+
+                <div class="info-box">
+                    <h4>Honest caveats</h4>
+                    <p><strong>1. Inputs differ by class.</strong> Structure-based predictions (Class II) take the experiment's <em>measured complexity</em> as input — that is the hybrid model's design (E = f(C)), but it means those points test the C→E relationship, not a from-scratch prediction. Density-based predictions (Class I) use only CPR and the architecture adjustment factor.</p>
+                    <p><strong>2. Live metrics differ from the historical tables.</strong> Recomputing from the embedded data reproduces the structure-based figures almost exactly (live R² ≈ 0.997 vs the documented 0.9974). The density-based figures (documented RMSE &lt; 0.03, R² &gt; 0.98) <em>do not reproduce</em>: the sigmoid predicts the central trend and regime, but at any given CPR the density-based experiments split into high-performing bands (e.g., additive + uniform_distribution, near E ≈ 1 in the emergent regime) and suppressed bands (e.g., multiplicative mixing, near E ≈ 0 regardless of CPR). The ×1.5–×7.34 adjustment factors shift log₁₀(CPR) by under one order of magnitude and cannot account for that spread. Treat the sigmoid as a regime classifier with a typical-performance curve, not a point predictor for every architecture.</p>
+                </div>
+
+                <p id="validationStats" style="font-weight:600;">Computing validation metrics…</p>
+
+                <div class="chart-wrapper">
+                    <canvas id="validationChart" aria-label="Scatter chart of predicted versus measured exploration for all 312 experiments"></canvas>
+                </div>
 
                 <h3>Detailed Pattern Prohibition Results</h3>
 
@@ -1981,7 +2027,264 @@ Overall Performance (312 experiments):
             return stats;
         }
 
+        // ============================================================================
+        // MODEL EVALUATION AGAINST EXPERIMENTAL DATA
+        // ============================================================================
+
+        function predictForExperiment(exp) {
+            if (getConstraintClass(exp.constraint) === 'structure') {
+                // Class II: complexity model, using the experiment's measured C as input
+                return predictFromComplexity(exp.complexity);
+            }
+            // Class I: CPR sigmoid with architecture adjustment
+            const uiConstraint = mapRawConstraintToUI(exp.constraint);
+            const factor = getAdjustmentFactor(uiConstraint, exp.mixing, exp.governor);
+            return predictFromCPR(exp.cpr * factor);
+        }
+
+        function computeValidationResults() {
+            const results = EXPERIMENT_DATA.map(exp => ({
+                actual: exp.exploration,
+                predicted: predictForExperiment(exp),
+                cls: getConstraintClass(exp.constraint),
+                config: exp.config,
+                constraint: exp.constraint,
+                mixing: exp.mixing,
+                governor: exp.governor
+            }));
+
+            function metricsOf(subset) {
+                const n = subset.length;
+                const ssRes = subset.reduce((s, r) => s + Math.pow(r.actual - r.predicted, 2), 0);
+                const meanActual = subset.reduce((s, r) => s + r.actual, 0) / n;
+                const ssTot = subset.reduce((s, r) => s + Math.pow(r.actual - meanActual, 2), 0);
+                const maxErr = subset.reduce((m, r) => Math.max(m, Math.abs(r.actual - r.predicted)), 0);
+                return { n, rmse: Math.sqrt(ssRes / n), r2: 1 - ssRes / ssTot, maxError: maxErr };
+            }
+
+            return {
+                results,
+                overall: metricsOf(results),
+                structure: metricsOf(results.filter(r => r.cls === 'structure')),
+                density: metricsOf(results.filter(r => r.cls === 'density'))
+            };
+        }
+
+        function estimateComplexityFromData(logCPR, mixing, governor) {
+            let pool = filterExperiments({ constraintClass: 'structure', mixing, governor });
+            let method;
+            let pooled = false;
+
+            if (pool.length === 0) {
+                // Governor not in dataset (e.g. novelty_seeking) — pool across tested governors
+                pool = filterExperiments({ constraintClass: 'structure', mixing });
+                pooled = true;
+            }
+            if (pool.length === 0) return null;
+
+            // Average measured complexity per distinct log10(CPR), then piecewise-linear interpolate
+            const byX = new Map();
+            pool.forEach(e => {
+                const x = Math.log10(e.cpr);
+                if (!byX.has(x)) byX.set(x, []);
+                byX.get(x).push(e.complexity);
+            });
+            const pts = [...byX.entries()]
+                .map(([x, cs]) => ({ x, c: cs.reduce((a, v) => a + v, 0) / cs.length }))
+                .sort((a, b) => a.x - b.x);
+
+            let complexity;
+            if (logCPR <= pts[0].x) {
+                complexity = pts[0].c;
+                method = `clamped to lowest tested CPR (10^${pts[0].x.toFixed(1)})`;
+            } else if (logCPR >= pts[pts.length - 1].x) {
+                complexity = pts[pts.length - 1].c;
+                method = `clamped to highest tested CPR (10^${pts[pts.length - 1].x.toFixed(1)})`;
+            } else {
+                let i = 0;
+                while (pts[i + 1].x < logCPR) i++;
+                const t = (logCPR - pts[i].x) / (pts[i + 1].x - pts[i].x);
+                complexity = pts[i].c + t * (pts[i + 1].c - pts[i].c);
+                method = `interpolated between tested CPRs 10^${pts[i].x.toFixed(1)} and 10^${pts[i + 1].x.toFixed(1)}`;
+            }
+
+            if (pooled) {
+                method += ' — governor untested, pooled across tested governors (extrapolation)';
+            }
+            return { complexity, method };
+        }
+
+        // ============================================================================
+        // STATIC ANALYSIS CHARTS (Validation + Constraint Classes tabs)
+        // ============================================================================
+
+        function ensureValidationChart() {
+            if (validationChart || !chartJsLoaded) return;
+            const ctx = document.getElementById('validationChart');
+            if (!ctx) return;
+
+            const v = computeValidationResults();
+
+            const statsEl = document.getElementById('validationStats');
+            if (statsEl) {
+                statsEl.innerHTML =
+                    `Live metrics — Structure-based (complexity model, n=${v.structure.n}): ` +
+                    `RMSE = ${v.structure.rmse.toFixed(4)}, R² = ${v.structure.r2.toFixed(4)}<br>` +
+                    `Live metrics — Density-based (CPR sigmoid, n=${v.density.n}): ` +
+                    `RMSE = ${v.density.rmse.toFixed(4)}, R² = ${v.density.r2.toFixed(4)}<br>` +
+                    `Live metrics — Overall (n=${v.overall.n}): ` +
+                    `RMSE = ${v.overall.rmse.toFixed(4)}, R² = ${v.overall.r2.toFixed(4)}`;
+            }
+
+            const densityPts = v.results.filter(r => r.cls === 'density')
+                .map(r => ({ x: r.actual, y: r.predicted, config: r.config, constraint: r.constraint, mixing: r.mixing, governor: r.governor }));
+            const structurePts = v.results.filter(r => r.cls === 'structure')
+                .map(r => ({ x: r.actual, y: r.predicted, config: r.config, constraint: r.constraint, mixing: r.mixing, governor: r.governor }));
+
+            validationChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Perfect prediction (y = x)',
+                            data: [{ x: 0, y: 0 }, { x: 1, y: 1 }],
+                            borderColor: 'rgba(100, 100, 100, 0.6)',
+                            borderDash: [6, 6],
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            showLine: true
+                        },
+                        {
+                            label: `Density-based (${densityPts.length} pts, CPR sigmoid)`,
+                            data: densityPts,
+                            backgroundColor: 'rgba(75, 192, 192, 0.55)',
+                            borderColor: 'rgba(75, 192, 192, 0.9)',
+                            pointRadius: 4,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: `Structure-based (${structurePts.length} pts, complexity model)`,
+                            data: structurePts,
+                            backgroundColor: 'rgba(102, 126, 234, 0.55)',
+                            borderColor: 'rgba(102, 126, 234, 0.9)',
+                            pointRadius: 4,
+                            pointHoverRadius: 7
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear', min: 0, max: 1,
+                            title: { display: true, text: 'Measured Exploration', font: { size: 14, weight: 'bold' } },
+                            ticks: { callback: v2 => (v2 * 100).toFixed(0) + '%' }
+                        },
+                        y: {
+                            type: 'linear', min: 0, max: 1,
+                            title: { display: true, text: 'Predicted Exploration', font: { size: 14, weight: 'bold' } },
+                            ticks: { callback: v2 => (v2 * 100).toFixed(0) + '%' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top', labels: { usePointStyle: true, padding: 15 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const p = context.raw;
+                                    if (!p.config) return null;
+                                    return [
+                                        `Config (${p.config}): ${p.constraint}`,
+                                        `${p.mixing} + ${p.governor}`,
+                                        `Measured: ${(p.x * 100).toFixed(2)}%  Predicted: ${(p.y * 100).toFixed(2)}%`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            console.log(`Validation chart created: overall RMSE=${v.overall.rmse.toFixed(4)}, R²=${v.overall.r2.toFixed(4)}`);
+        }
+
+        function generateComplexityModelCurve() {
+            const pts = [];
+            for (let c = 0; c <= C_MAX + 1e-9; c += C_MAX / 120) {
+                pts.push({ x: c, y: predictFromComplexity(c) });
+            }
+            return pts;
+        }
+
+        function ensureClassScatterChart() {
+            if (classScatterChart || !chartJsLoaded) return;
+            const ctx = document.getElementById('classScatterChart');
+            if (!ctx) return;
+
+            const structureExps = filterExperiments({ constraintClass: 'structure' })
+                .map(e => ({ x: e.complexity, y: e.exploration, config: e.config, constraint: e.constraint, mixing: e.mixing, governor: e.governor }));
+
+            classScatterChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Complexity model: E = (C/C_max)^0.90 × 10^−0.015',
+                            data: generateComplexityModelCurve(),
+                            borderColor: 'rgba(100, 100, 100, 0.7)',
+                            borderDash: [6, 6],
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            showLine: true
+                        },
+                        {
+                            label: `Structure-based experiments (${structureExps.length} pts)`,
+                            data: structureExps,
+                            backgroundColor: 'rgba(102, 126, 234, 0.55)',
+                            borderColor: 'rgba(102, 126, 234, 0.9)',
+                            pointRadius: 4,
+                            pointHoverRadius: 7
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear', min: 0, max: 2.5,
+                            title: { display: true, text: 'Measured Complexity (C)', font: { size: 14, weight: 'bold' } }
+                        },
+                        y: {
+                            type: 'linear', min: 0, max: 1,
+                            title: { display: true, text: 'Measured Exploration (E)', font: { size: 14, weight: 'bold' } },
+                            ticks: { callback: v2 => (v2 * 100).toFixed(0) + '%' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top', labels: { usePointStyle: true, padding: 15 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const p = context.raw;
+                                    if (!p.config) return null;
+                                    return [
+                                        `Config (${p.config}): ${p.constraint}`,
+                                        `${p.mixing} + ${p.governor}`,
+                                        `C: ${p.x.toFixed(4)}  E: ${(p.y * 100).toFixed(2)}%`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            console.log(`Class scatter chart created with ${structureExps.length} structure-based points`);
+        }
+
         let chart = null;
+        let validationChart = null;
+        let classScatterChart = null;
         let chartJsLoaded = false;
 
         // ============================================================================
@@ -2002,6 +2305,14 @@ Overall Performance (312 experiments):
                     button.classList.add('active');
                     const contentId = button.id.replace('tab-', 'content-');
                     document.getElementById(contentId).classList.add('active');
+
+                    // Lazily create analysis charts when their tab first becomes
+                    // visible (Chart.js cannot size a canvas inside display:none)
+                    if (contentId === 'content-validation') {
+                        ensureValidationChart();
+                    } else if (contentId === 'content-classes') {
+                        ensureClassScatterChart();
+                    }
                 });
             });
         }
@@ -2041,7 +2352,10 @@ Overall Performance (312 experiments):
         }
 
         function sigmoid(x, L, k, x0) {
-            const exponent = -k * (x - x0);
+            // E = L / (1 + e^(k(x - x0))): exploration approaches L as
+            // log10(CPR) falls below the critical point x0 (emergent regime)
+            // and approaches 0 above it (constrained regime)
+            const exponent = k * (x - x0);
             if (exponent > OVERFLOW_THRESHOLDS.MAX_EXPONENT) return 0;
             if (exponent < OVERFLOW_THRESHOLDS.MIN_EXPONENT) return L;
 
@@ -2124,16 +2438,37 @@ Overall Performance (312 experiments):
             const constraint = document.getElementById('constraintType').value;
             const mixing = document.getElementById('mixingType').value;
             const governor = document.getElementById('governorType').value;
-            const complexity = parseFloat(document.getElementById('complexitySlider').value);
+
+            const cpr = calculateCPR(n, b);
+            const logCpr = Math.log10(cpr);
+
+            // Resolve complexity: manual slider, or data-driven estimate when toggled on
+            const complexitySlider = document.getElementById('complexitySlider');
+            const estimateToggle = document.getElementById('estimateComplexity');
+            const estimateNote = document.getElementById('estimateNote');
+            const estimating = estimateToggle.checked && constraint === 'pattern_prohibition' && isFinite(logCpr);
+
+            let complexity = parseFloat(complexitySlider.value);
+            if (estimating) {
+                const est = estimateComplexityFromData(logCpr, mixing, governor);
+                if (est) {
+                    complexity = est.complexity;
+                    complexitySlider.value = complexity.toFixed(4);
+                    estimateNote.textContent = `C ≈ ${complexity.toFixed(4)} — ${est.method}`;
+                } else {
+                    estimateNote.textContent = 'No structure-based experimental data available for this architecture.';
+                }
+            } else if (estimateToggle.checked) {
+                estimateNote.textContent = 'Estimation applies only to pattern_prohibition (the complexity model).';
+            } else {
+                estimateNote.textContent = '';
+            }
+            complexitySlider.disabled = estimating;
 
             // Update slider values
             document.getElementById('systemSizeValue').textContent = n;
             document.getElementById('systemBaseValue').textContent = b;
-            document.getElementById('complexityValue').textContent = complexity.toFixed(2);
-
-            // Calculate metrics
-            const cpr = calculateCPR(n, b);
-            const logCpr = Math.log10(cpr);
+            document.getElementById('complexityValue').textContent = complexity.toFixed(2) + (estimating ? ' (est.)' : '');
             const adjustmentFactor = getAdjustmentFactor(constraint, mixing, governor);
             const adjustedCPR = calculateAdjustedCPR(cpr, adjustmentFactor);
             const exploration = predictExploration(cpr, complexity, constraint, mixing, governor);
@@ -2164,7 +2499,7 @@ Overall Performance (312 experiments):
             updateArchitectureAnalysis(constraint, mixing, governor, adjustmentFactor, regime, modelType, complexity, exploration, n, b);
 
             // Update chart with experimental data overlay
-            updateChart(adjustedCPR, exploration, modelType, n, b, constraint, mixing, governor);
+            updateChart(adjustedCPR, exploration, modelType, n, b, constraint, mixing, governor, complexity);
         }
 
         function updateArchitectureAnalysis(constraint, mixing, governor, factor, regime, modelType, complexity, exploration, n, b) {
@@ -2293,11 +2628,150 @@ Overall Performance (312 experiments):
                 }));
         }
 
-        function updateChart(currentAdjustedCPR, currentExploration, modelType, n, b, constraint, mixing, governor) {
+        function updateChartComplexityView(currentExploration, n, b, constraint, mixing, governor, complexity) {
+            const loadingElement = document.getElementById('chartLoading');
+            loadingElement.classList.remove('hidden');
+            loadingElement.textContent = 'Loading chart...';
+
+            const ctx = document.getElementById('phaseChart');
+            if (!ctx) {
+                console.error('Canvas element not found');
+                loadingElement.textContent = 'Error: Canvas element not found';
+                return;
+            }
+
+            if (chart) {
+                chart.destroy();
+                chart = null;
+            }
+
+            document.getElementById('chartTitle').textContent = 'Complexity → Exploration (Structure-Based Model)';
+            document.getElementById('chartAbout').textContent =
+                'Pattern prohibition uses the complexity model, so this chart shows complexity space rather than CPR space. ' +
+                'The dashed curve is E = (C/C_max)^0.90 × 10^−0.015. Purple dots are the 156 structure-based experimental measurements. ' +
+                'The blue triangle is your current configuration\'s prediction.';
+
+            const structureExps = filterExperiments({ constraintClass: 'structure' })
+                .map(e => ({ x: e.complexity, y: e.exploration, config: e.config, constraint: e.constraint, mixing: e.mixing, governor: e.governor }));
+
+            const configStr = makeConfigStr(n, b);
+            const matchingExp = findMatchingExperiment(configStr, constraint, mixing, governor);
+
+            const datasets = [
+                {
+                    label: 'Complexity model: E = (C/C_max)^0.90 × 10^−0.015',
+                    data: generateComplexityModelCurve(),
+                    borderColor: 'rgba(100, 100, 100, 0.7)',
+                    borderDash: [6, 6],
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    showLine: true
+                },
+                {
+                    label: `Structure-based experiments (${structureExps.length} pts)`,
+                    data: structureExps,
+                    backgroundColor: 'rgba(102, 126, 234, 0.4)',
+                    borderColor: 'rgba(102, 126, 234, 0.8)',
+                    pointRadius: 4,
+                    pointHoverRadius: 7
+                }
+            ];
+
+            if (matchingExp) {
+                datasets.push({
+                    label: `Measured (${matchingExp.config})`,
+                    data: [{ x: matchingExp.complexity, y: matchingExp.exploration }],
+                    backgroundColor: '#10b981',
+                    borderColor: '#047857',
+                    pointRadius: 12,
+                    pointHoverRadius: 14,
+                    showLine: false,
+                    pointStyle: 'rectRot'
+                });
+            }
+
+            datasets.push({
+                label: 'Predicted (Complexity Model)',
+                data: [{ x: complexity, y: currentExploration }],
+                backgroundColor: '#3b82f6',
+                borderColor: '#1e40af',
+                pointRadius: 12,
+                pointHoverRadius: 14,
+                showLine: false,
+                pointStyle: 'triangle'
+            });
+
+            try {
+                chart = new Chart(ctx, {
+                    type: 'scatter',
+                    data: { datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear', min: 0, max: 2.5,
+                                title: { display: true, text: 'Complexity (C)', font: { size: 14, weight: 'bold' } },
+                                grid: { color: 'rgba(0, 0, 0, 0.1)' }
+                            },
+                            y: {
+                                type: 'linear', min: 0, max: 1,
+                                title: { display: true, text: 'Exploration', font: { size: 14, weight: 'bold' } },
+                                grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                                ticks: { callback: v => (v * 100).toFixed(0) + '%' }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: true, position: 'top', labels: { usePointStyle: true, padding: 15 } },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const datasetLabel = context.dataset.label || '';
+                                        if (datasetLabel.includes('model:')) {
+                                            return `Model: ${(context.parsed.y * 100).toFixed(2)}% @ C = ${context.parsed.x.toFixed(3)}`;
+                                        } else if (datasetLabel.includes('experiments')) {
+                                            const p = context.raw;
+                                            return [
+                                                `Config (${p.config}): ${p.constraint}`,
+                                                `${p.mixing} + ${p.governor}`,
+                                                `C: ${p.x.toFixed(4)}  E: ${(p.y * 100).toFixed(2)}%`
+                                            ];
+                                        } else if (datasetLabel.includes('Measured')) {
+                                            return `Measured: ${(context.parsed.y * 100).toFixed(2)}% @ C = ${context.parsed.x.toFixed(3)}`;
+                                        }
+                                        return `Predicted: ${(context.parsed.y * 100).toFixed(2)}% @ C = ${context.parsed.x.toFixed(3)}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                console.log('Complexity-view chart created successfully');
+                loadingElement.classList.add('hidden');
+            } catch (e) {
+                console.error('Error creating complexity-view chart:', e);
+                loadingElement.textContent = 'Error creating chart: ' + e.message;
+            }
+        }
+
+        function updateChart(currentAdjustedCPR, currentExploration, modelType, n, b, constraint, mixing, governor, complexity) {
             if (!chartJsLoaded) {
                 console.warn('Chart.js not loaded yet');
                 return;
             }
+
+            // Structure-based constraints predict in complexity space, so the
+            // Explorer chart switches representation with the model
+            if (modelType === 'complexity_based') {
+                updateChartComplexityView(currentExploration, n, b, constraint, mixing, governor, complexity);
+                return;
+            }
+
+            document.getElementById('chartTitle').textContent = 'Phase Transition Visualization';
+            document.getElementById('chartAbout').textContent =
+                'This visualization shows the relationship between CPR and Exploration. The purple curve represents the universal ' +
+                'sigmoid model for density-based constraints. Teal dots are real experimental measurements. The red point shows ' +
+                'your current configuration\'s prediction.';
 
             const loadingElement = document.getElementById('chartLoading');
             loadingElement.classList.remove('hidden');
@@ -2373,29 +2847,17 @@ Overall Performance (312 experiments):
                 });
             }
 
-            // Add current point with different color based on model type
-            if (modelType === 'complexity_based') {
-                datasets.push({
-                    label: 'Predicted (Complexity Model)',
-                    data: [{ x: currentLogCPR, y: currentExploration }],
-                    backgroundColor: '#3b82f6',
-                    borderColor: '#1e40af',
-                    pointRadius: 12,
-                    pointHoverRadius: 14,
-                    showLine: false,
-                    pointStyle: 'triangle'
-                });
-            } else {
-                datasets.push({
-                    label: 'Predicted (CPR Model)',
-                    data: [{ x: currentLogCPR, y: currentExploration }],
-                    backgroundColor: '#e53e3e',
-                    borderColor: '#c53030',
-                    pointRadius: 10,
-                    pointHoverRadius: 12,
-                    showLine: false
-                });
-            }
+            // Current point (complexity-model configs are routed to the
+            // complexity-space view before reaching this code)
+            datasets.push({
+                label: 'Predicted (CPR Model)',
+                data: [{ x: currentLogCPR, y: currentExploration }],
+                backgroundColor: '#e53e3e',
+                borderColor: '#c53030',
+                pointRadius: 10,
+                pointHoverRadius: 12,
+                showLine: false
+            });
 
             // Build annotations array
             const annotations = {};
@@ -2613,6 +3075,9 @@ Overall Performance (312 experiments):
             document.getElementById('constraintType').addEventListener('change', updateCalculations);
             document.getElementById('mixingType').addEventListener('change', updateCalculations);
             document.getElementById('governorType').addEventListener('change', updateCalculations);
+
+            // Complexity estimation toggle
+            document.getElementById('estimateComplexity').addEventListener('change', updateCalculations);
 
             // Add event listeners for preset buttons
             document.getElementById('btn-constrained').addEventListener('click', function() {
